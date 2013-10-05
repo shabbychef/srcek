@@ -1,0 +1,234 @@
+\documentclass[10pt]{letter}
+\textheight=9in\textwidth=6.5in\topmargin=0in\oddsidemargin=0in
+
+\usepackage[newitem,newenum,increaseonly]{paralist}
+\usepackage[commands]{sepmath}
+
+\address{Steven E. Pav\\
+Technology Development\\
+Nellcor\\
+4280 Hacienda Drive\\
+Pleasanton, CA, 94588 USA\\
+Steven.Pav\@@TycoHealthcare.com}
+\name{Steven E. Pav}
+
+\location{Tech Dev}
+\telephone{925 463 4253}
+\signature{Steven E. Pav}
+
+\date{\today}
+
+\begin{document}
+
+\begin{letter}{Professor C.H. Spiegelman\\%FOLDUP
+Statistics Department\\
+Texas A \& M University\\
+College Station, TX 77843, USA}%UNFOLD
+\opening{Professor Spiegelman;}
+
+Please consider the attached manuscript, ``SRCEK: A Continuous Embedding of the
+Channel Selection Problem for WPLS Modeling,'' for publication in the Journal
+of Chemometrics and Intelligent Laboratory Systems.  This paper explores a
+continuous embedding of the problem of selecting a subset of available
+channels, or wavelengths, for affine modelling of a response by weighted PLS.
+This paper includes a formulation of the WPLS algorithm which also allows
+computation of the Jacobian of the regression vector with respect to predictor
+weightings.  This allows one to minimize the quality of cross validation with
+respect to continuous weightings.  Following a numerical optimization, the
+embedding is reversed \emph{e.g.} by use of an information criterion.
+
+In addition to those potential reviewers listed in the attached file, I might
+also suggest that Michele Forina review this paper, as I believe he is
+eminently qualified for the task.  However, I have had some brief communications 
+with Dr. Forina regarding this paper (he graciously supplied the data sets), so
+I wish to avoid any impressions of impropriety by suggesting him as a reviewer.
+
+I look forward to hearing from you soon.  If you have any questions, do not
+fail to contact me.  
+
+\closing{Yours truly,}
+%\encl{AMS cover sheet\\curriculum vita\\list of publications\\statement of research}
+%\encl{AMS cover sheet\\curriculum vita\\list of publications\\
+%statements of research and teaching}
+\encl{List of Potential Reviewers,\\Manuscript}
+
+\end{letter}
+%FOLDUP
+%My current research focuses on the problem of dividing arbitrary, closed,
+%affinely bounded domains in $\reals{2}$ and $\reals{3}$ into simplicial
+%complices suitable for application of the finite element method.  To insure
+%convergence of the method with respect to shrinking element size, it is desireable for
+%the output simplices to be ``nicely shaped.'' One measure of this quality is
+%that simplices should have a low circumradius-to-inradius ratio.  In
+%particular, I am studying the Delaunay Refinement method, a well-known
+%technique for producing high-quality Delaunay ``meshes'' of planar domains;
+%the method produces meshes where small simplices are near small features of the
+%input, and moreover has an optimality result:  it produces meshes with no more
+%than a constant (albeit an astronomical one) as many Steiner points as
+%\emph{any} other technique which solves the same meshing problem.  In practice
+%the technique works rather well, not approaching the theoretically possible
+%poor performance of the optimality theorem.
+%
+%The main results of my thesis are as follows:
+%\begin{compactitem}
+%\item The Delaunay Refinement Algorithm, in \reals{2}, can be applied to a
+%wider class of input than previously analyzed. In fact any well-formed input
+%can be used, subject to a preprocessing step.  The algorithm is optimal in all
+%cases, but the proven optimality constant becomes arbitrarily large for input
+%with small angles.  The algorithm does suffer some loss of output quality for
+%input with small angles.  
+%\item A locally adaptive variant of the algorithm, which is not too different
+%from what has already been widely implemented, can guarantee the presence of
+%high quality output simplices far from small input angles.  Thus the poor
+%quality guarantee of the regular algorithm can be locally isolated.  
+%\item By using a more ``aggressive'' preprocessing step, a better output
+%quality can be guaranteed by the adaptive algorithm.  It can be guaranteed that
+%no angles smaller than about $26.4\dgry$ will be present in the output mesh, an
+%improvement over the previously known bound of about $20.7\dgry.$  (In
+%\reals{2}, the quality measure is equivalent to smallest angle.  It appears
+%that angle guarantees greater than $30\dgry$ are not possible.)
+%The tradeoff for the output guarantee is a small constant possible increase in
+%the number of Steiner Points.  
+%
+%\end{compactitem}
+%
+%Additionally, I have shown that the Delaunay Refinement method can be
+%generalized to arbitrary dimensions.  Some unfortunate facts about this work
+%are that assumptions on the input are far too restrictive, there isn't really
+%an optimality result, and the output quality guarantee is terrible, \ie a
+%weaker measure than inradius-circumradius is controlled.
+%
+%In ongoing and future research, I hope to
+%\begin{compactitem}
+%\item Concoct a robust alteration of the Delaunay Refinement method for
+%        meshing in \reals{3} (or even \reals{n}), that can accept arbitrary input. A
+%				locally adaptive version would be acceptable.  This currently looks
+%				promising.
+%\item Close the gap from the current $26.4\dgry$ output
+%        angle bound to the theoretical maximum value of $30\dgry.$
+%\item Study the problem of ``sliver removal'' in \reals{3}, \ie 
+%guaranteeing output mesh quality via the circumradius-inradius measure
+%rather than the currently known measure, which may leave behind ``flat''
+%tetrahedra known as slivers.
+%\end{compactitem}
+%
+%
+%UNFOLD
+\end{document}
+%lost and found:
+%\begin{letter}{Professor Hans-Peter Seidel\\%FOLDUP
+%Max-Planck-Institut für Informatik\\
+%Stuhlsatzenhausweg 85\\
+%66123 Saarbr\"{u}cken\\
+%Germany}
+%\opening{Dear Professor Seidel;}%UNFOLD
+%\begin{letter}{Kurt Mehlhorn\\%FOLDUP
+%Max-Planck-Institut f\"ur Informatik\\
+%Im Stadtwald\\
+%D-66123 Saarbr\"ucken\\
+%Germany}
+%\begin{letter}{
+%Prof. Dr. E. Zeidler\\
+%Managing Director\\
+%MPI for Mathematics in the Sciences\\
+%Inselstr. 22\\ 
+%D-04103 Leipzig\\
+%Germany}
+%\opening{Dear Dr. Zeidler;}%UNFOLD
+%\begin{letter}{Professor Ersin Yurtseve\\%FOLDUP
+%Dean of the College of Arts and Sciences\\
+%Ko\c{c} University\\
+%Rumelifeneri Yolu, 34450 Sariyer-Istanbul\\
+%Turkey}
+%\opening{Dear Dr. Yurtseve;}%UNFOLD
+%\begin{letter}{Professor Hans Petter Langtangen\\%FOLDUP
+%Department of Scientific Computing\\
+%Simula Research Laboratory\\
+%P.O. Box 134\\
+%1325 Lysaker\\
+%Norway}%UNFOLD
+%\begin{letter}{Hiring Committee\\%FOLDUP
+%Department of Mathematics\\
+%San Francisco State University\\
+%San Francisco, CA, 94132}
+%\opening{To whom it may concern}%UNFOLD
+%\begin{letter}{Attn: Job Code NSAM002\\%FOLDUP
+%David B. Ashley\\
+%Executive Vice Chancellor and Provost\\
+%University of California, Merced\\
+%PO Box 2039\\
+%Merced, CA 95344-0039.}
+%\opening{Dear Vice Chancellor Ashley;}%UNFOLD
+%\begin{letter}{Hiring Committee\\%FOLDUP
+%Department of Mathematics\\
+%San Francisco State University\\
+%San Francisco, CA, 94132}
+%\opening{To whom it may concern;}%UNFOLD
+%\begin{letter}{Search Committee\\%FOLDUP
+%Department of Mathematics\\
+%Stanford University\\
+%Stanford, CA 94305}
+%\opening{To whom it may concern;}%UNFOLD
+%\begin{letter}{Szeg\"{o} Search Committee\\%FOLDUP
+%Department of Mathematics\\
+%Stanford University\\
+%Stanford, CA 94305}
+%\opening{To whom it may concern;}%UNFOLD
+%\begin{letter}{attn: \#05-06 MCS-MATHEMATICS-TT\\%FOLDUP
+%Department of Math/CS\\
+%California State University\\
+%Hayward, CA 94542-3092}
+%\opening{To whom it may concern;}%UNFOLD
+%My work is primarily in the area of computational geometry, in particular the %FOLDUP
+%problem of dividing arbitrary, closed, affinely bounded domains in $\reals{2}$
+%and $\reals{3}$ into simplicial complices suitable for application of the
+%finite element method.  The work that comprises my thesis analyzes the
+%termination and optimality of the Delaunay Refinement method of Ruppert;  I
+%have discovered a slight variant of the algorithm which terminates with an
+%optimality guarantee independent of small angles in the input domain.
+%Moreover, I have discovered that Ruppert's original strategy for dealing with
+%midpoint-midpoint interactions works, producing optimal meshes, and can
+%guarantee better output meshes than previously thought.
+%
+%For future research, I hope to address the following issues:
+%\begin{compactitem}
+%\item Currently there is no known strategy for applying the Delaunay Refinement
+%	method, in \reals{3}, to domains with arbitrarily small dihedral angles.  I
+%	would like to generalize the analysis I have done for the two dimensional
+%	case to develop such a strategy.
+%\item Another failure of the quality meshing in three (and higher) dimensions
+%	is the problem of ``slivers,'' that is, simplices with small
+%	inradius-circumradius ratio, but with a large shortest edge-circumradius ratio.
+%	To devise some means of dealing with such simplices would be of great
+%	advantage for the application of the finite element method.
+%\item In my thesis, I show that the Delaunay Refinement Algorithm can guarantee
+%	angles in the output are no smaller than $26.4\dgry.$  I would like to
+%	somehow answer the open question: ``Is there a technique for generating
+%	well-graded meshes with a $30\dgry$ output guarantee?''  (Naturally, the real
+%	output guarantee would have to somehow accommodate small input angles.)
+%\end{compactitem}
+%
+%%I have asked the following people to send letters of reference separately:
+%
+%I encourage you to contact the following references:
+%\begin{compactitem}
+%\item[] Noel J. Walkington, Department of Mathematics, Carnegie Mellon
+%University.  noelw\@@andrew.cmu.edu
+%\item[] Gary L. Miller, School of Computer Science, Carnegie Mellon
+%University.  glmiller\@@cs.cmu.edu
+%\item[] Shlomo Ta'asan, Department of Mathematics, Carnegie Mellon
+%University.  shlomo\@@andrew.cmu.edu
+%\end{compactitem}%UNFOLD
+%FOLDUP
+%\begin{compactitem}
+%\item Noel J. Walkington, Department of Mathematics, Carnegie Mellon
+%University.  noelw\@@andrew.cmu.edu
+%\item Jonathan Shewchuk, Computer Science Division, University of California
+%at Berkeley.  jrs\@@cs.berkeley.edu
+%\item Tom Bohman, Department of Mathematics, Carnegie Mellon
+%University.  tbohman\@@moser.math.cmu.edu
+%\item Gary L. Miller, School of Computer Science, Carnegie Mellon
+%University.  glmiller\@@cs.cmu.edu
+%\item Shlomo Ta'asan, Department of Mathematics, Carnegie Mellon
+%University.  shlomo\@@andrew.cmu.edu
+%\end{compactitem}%UNFOLD

@@ -1,0 +1,74 @@
+
+set output "clover.eps"
+#set terminal postscript color enhanced 
+set terminal postscript eps color enhanced 
+
+set polar;
+set trange [0:pi/2];
+set samples 300,300;
+
+nor(t,p) = (abs(sin(t)) ** p + abs(cos(t)) ** p) ** (1.0 / p);
+mut(t,p,q) = (nor(t,p) / nor(t,q)) ** (p * q / (q - p));
+
+innor(t,p) = (abs(1.0 / sin(t)) ** p + abs(1.0 / cos(t)) ** p) ** (1.0 / p);
+inmut(t,p,q) = (innor(t,p) / innor(t,q)) ** (p * q / (q - p));
+
+comb(t,p,q) = 0.5 * (mut(t,p,q) + inmut(t,p,q));
+
+circ1(t) = 1;
+circ2(t) = 2;
+
+#plot mut(t,1.0,1.01) title '11',\
+#		 mut(t,2.0,1.0) title '21',\
+#		 mut(t,5.0,2.0) title '52',\
+#		 mut(t,20.0,19.0) title '29'
+#plot mut(t,0.25,0.75) title '255',\
+#     mut(t,1.0,1.01) title '11',\
+#		 mut(t,1.0,2.5) title '125',\
+#		 mut(t,5.0,2.0) title '52',\
+#		 mut(t,20.0,19.0) title '29', \
+#		 circ1(t) title '',\
+#		 circ2(t) title ''
+
+set label '255' at 0.423517,1.81544
+set label '11'  at 0.507349,1.62315
+set label '125' at 0.604790,1.45983
+set label '52' at  0.716385,1.2574
+set label '29' at  0.939031,1.13266
+
+plot mut(t,0.25,0.75) title '',\
+     mut(t,1.0,1.01) title '',\
+		 mut(t,1.0,2.5) title '',\
+		 mut(t,5.0,2.0) title '',\
+		 mut(t,20.0,19.0) title '', \
+		 circ1(t) title '',\
+		 circ2(t) title ''
+
+set output "/dev/null"
+set terminal x11
+
+plot comb(t,1.0,1.01) title 'comb 11',\
+		 comb(t,2.0,1.0) title 'comb 21',\
+		 comb(t,5.0,2.0) title 'comb 52',\
+		 comb(t,20.0,19.0) title 'comb 29'
+
+plot inmut(t,1.0,1.01) title 'inmut 11',\
+		 inmut(t,2.0,1.0) title 'inmut 21',\
+		 inmut(t,5.0,2.0) title 'inmut 52',\
+		 inmut(t,20.0,19.0) title 'inmut 29'
+
+set label '255' at 0.423517,1.81544
+set label '11'  at 0.507349,1.62315
+set label '125' at 0.604790,1.45983
+set label '52' at  0.716385,1.2574
+set label '29' at  0.939031,1.13266
+
+plot mut(t,0.25,0.75) title '',\
+     mut(t,1.0,1.01) title '',\
+		 mut(t,1.0,2.5) title '',\
+		 mut(t,5.0,2.0) title '',\
+		 mut(t,20.0,19.0) title '', \
+		 circ1(t) title '',\
+		 circ2(t) title ''
+
+

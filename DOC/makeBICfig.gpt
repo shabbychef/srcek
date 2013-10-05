@@ -1,0 +1,34 @@
+
+set terminal postscript color solid landscape 
+set output "sdvbic.eps"
+
+set logscale x
+set logscale y
+set xrange [800:3000]
+set yrange [150:370]
+set xtics 1000,1.5,10000;
+set mxtics 10;
+set ytics 160,1.5,1600;
+set mytics 10;
+
+plot "BICvSD.txt" title "SDvaBIC"
+
+set output "/dev/null"
+set terminal X11
+
+plot "BICvSD.txt" title "SD vs. aBIC"
+
+
+plot "BICvSD.txt" title "SD vs. aBIC", \
+			 "conjecdat.txt" title "randchan", \
+			 "SRCEKBICvSD.txt" title "SRCEK"
+
+set terminal postscript color solid landscape 
+set output "sdvbicall.eps"
+
+plot "BICvSD.txt" title "SD vs. aBIC", \
+			 "conjecdat.txt" title "randchan", \
+			 "SRCEKBICvSD.txt" title "SRCEK"
+
+set output "/dev/null"
+set terminal X11

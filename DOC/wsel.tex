@@ -1,0 +1,3590 @@
+\documentclass[11pt]{article}
+
+\textheight=8.65in\textwidth=6.0in\topmargin=-.30in\oddsidemargin=-0.20in
+%\textheight=22.85cm\textwidth=16.5cm\topmargin=-.635cm\oddsidemargin=0cm
+\renewcommand{\marginparwidth}{2.5cm}
+
+%cvs%stuff%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FOLDUP
+% $Id: wsel.tex 119 2006-06-22 21:18:31Z spav $
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%UNFOLD
+
+\typeout{-- wsel.tex}
+\typeout{-- N© 2006 s.e.p.}
+\typeout{-- SVNId: $Id: wsel.tex 119 2006-06-22 21:18:31Z spav $}
+
+%preamble%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FOLDUP
+
+%\usepackage{psfig}\psfull
+\usepackage{graphicx,epsfig,psfrag}
+\usepackage[usenames]{color}
+\usepackage{subfigure}
+\graphicspath{{figs/}}
+\newcommand{\useBW}{.bw}
+\newcommand{\figDIR}{figs}
+
+\usepackage[today,nofancy]{svninfo}
+\svnInfo $Id: wsel.tex 119 2006-06-22 21:18:31Z spav $
+
+
+%\usepackage[english,dark,none,bottom,portrait,timestamp]{draftcopy}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\svnInfoFile~V\svnInfoRevision}
+\chead{}
+\rhead{\svnInfoDate~\svnInfoTime}
+%\rfoot{\bfseries PROPRIETARY \& CONFIDENTIAL}
+\rfoot{\bfseries Copyright 2006, S. E. Pav; Distribution Unlimited.}
+\cfoot{}
+\usepackage{lastpage}
+\lfoot{p. \thepage /\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0pt}
+
+\usepackage{alg}
+%\floatstyle{boxed}
+\floatstyle{ruled}
+\restylefloat{algorithmfloat}
+%\usepackage{empheq}
+%\providecommand{\widefbox}[1]{\fbox{\hspace{1em}{#1}\hspace{1em}}}
+%
+
+
+%basic symbols
+
+%the data
+\providecommand{\Xsym}{X}
+\providecommand{\ysym}{y}
+
+%vecs for PLS alg
+\providecommand{\Wsym}{W}
+\providecommand{\Usym}{U}
+\providecommand{\Qsym}{Q}
+\providecommand{\Vsym}{V}
+\providecommand{\Tsym}{T}
+\providecommand{\Psym}{P}
+\providecommand{\Zsym}{Z}
+%sclrs for PLS alg
+\providecommand{\tsym}{t}
+\providecommand{\qsym}{q}
+\providecommand{\rsym}{r}
+\providecommand{\ssym}{s}
+\providecommand{\usym}{u}
+\providecommand{\wsym}{w}
+\providecommand{\vsym}{v}
+
+%indices
+\providecommand{\ix}{i}
+\providecommand{\jx}{j}
+
+%weightings:
+\providecommand{\lasym}{\lambda}
+\providecommand{\Lasym}{\Lambda}
+\providecommand{\gasym}{\gamma}
+\providecommand{\Gasym}{\Gamma}
+\providecommand{\xisym}{\xi}
+
+%some random scalars
+\providecommand{\scsym}{c}
+
+%residual
+\providecommand{\Xesym}{E}
+\providecommand{\yesym}{f}
+\providecommand{\resym}{\epsilon}
+
+%BFGS step dirs?
+\providecommand{\rosym}{\rho}
+\providecommand{\alsym}{\alpha}
+
+%regression coefs
+\providecommand{\regasym}{\alpha}
+\providecommand{\regbsym}{\beta}
+
+%function names
+\providecommand{\ffsym}{\phi}
+\providecommand{\obfsym}{\psi}
+\providecommand{\mrsym}{\kappa}
+
+%dimensions
+\providecommand{\ro}{m}
+\providecommand{\cl}{n}
+\providecommand{\fc}{l}
+\providecommand{\ms}{k}
+
+%derivatives?
+\providecommand{\jacb}[2]{\prbypr{#1}{#2}}
+\providecommand{\kron}[1]{\MATHIT{\neSUB{\delta}{#1}}}
+
+%iterates of a scalar, mtx, vec.
+\providecommand{\scalk}[2][{k}]{\MATHIT{\neSUP{#2}{\wrapNeParens{#1}}}}
+\providecommand{\Mtxk}[2][{k}]{\scalk[#1]{\Mtx{#2}}}
+\providecommand{\vectk}[2][{k}]{\scalk[#1]{\vect{#2}}}
+
+%altering quantities
+\providecommand{\undrl}[1]{\tilde{#1}}				%underlaying
+
+\providecommand{\nePAIR}[2]{{#1}\lMr{#2}}
+
+\providecommand{\sclr}[1][{}]{\MATHIT{\neSUB{\scsym}{#1}}}
+
+\providecommand{\LAM}{\Mtx{\Lasym}}
+\providecommand{\LAMk}[1]{\MATHIT{\neSUP{\Mtx{\Lasym}}{#1}}}
+\providecommand{\lame}[1]{\MATHIT{\neSUB{\lasym}{#1}}}
+\providecommand{\lamex}[2]{\MATHIT{\neUL{\lasym}{#1}{#2}}}
+\providecommand{\vlam}{\vect{\lasym}}
+\providecommand{\dlam}[1]{\jacb{#1}{\vlam}}
+\providecommand{\glam}[1][{}]{\MATHIT{\nabla_{\vlam}{#1}}}
+\providecommand{\vlamk}[1][{k}]{\vectk[#1]{\lasym}}
+
+\providecommand{\GAM}{\Mtx{\Gasym}}
+\providecommand{\GAMk}[1]{\MATHIT{\neSUP{\Mtx{\Gasym}}{#1}}}
+\providecommand{\GAMj}[1][{j}]{\Mtxk[#1]{\Gasym}}
+\providecommand{\game}[1]{\MATHIT{\neSUB{\gasym}{#1}}}
+\providecommand{\gamex}[2]{\MATHIT{\neUL{\gasym}{#1}{#2}}}
+\providecommand{\vgam}{\vect{\gasym}}
+\providecommand{\dgam}[1]{\jacb{#1}{\vgam}}
+\providecommand{\ggam}[1][{}]{\MATHIT{\nabla_{\vgam}{#1}}}
+
+\providecommand{\vxi}{\vect{\xisym}}
+\providecommand{\xime}[1]{\MATHIT{\neSUB{\xisym}{#1}}}
+\providecommand{\xilam}[1][{}]{\MATHIT{\nabla_{\vxi}{#1}}}
+
+
+\providecommand{\vrok}[1][{k}]{\vectk[#1]{\rosym}}
+\providecommand{\salk}[1][{k}]{\scalk[#1]{\alsym}}
+
+\providecommand{\mrp}[2][{p}]{\MATHIT{\neSUB{\mrsym}{#1}\wrapNeParens{#2}}}
+\providecommand{\mrpq}[2][{p,q}]{\MATHIT{\neSUB{\mrsym}{#1}\wrapNeParens{#2}}}
+
+\providecommand{\obf}[1]{\MATHIT{\obfsym\wrapNeParens{#1}}}
+\providecommand{\obfa}[1]{\MATHIT{\tilde{\obfsym}\wrapNeParens{#1}}}
+
+
+\providecommand{\eye}[1][{}]{\MATHIT{\neSUB{\Mtx{I}}{#1}}}
+
+%\providecommand{\ip}[2]{\wrapAngles{#1,#2}}
+\providecommand{\ip}[2]{\MATHIT{\trans{#1}{#2}}}
+
+\providecommand{\prd}{\Mtx{\Xsym}}
+\providecommand{\rsp}{\vect{\ysym}}
+
+\providecommand{\Xe}{\Mtx{\Xesym}}
+\providecommand{\ye}{\vect{\yesym}}
+
+\providecommand{\msz}[1]{\MATHIT{\neSUB{\ro}{#1}}}
+
+\providecommand{\Xcal}{\MATHIT{\prd_{\text{cal}}}}
+\providecommand{\ycal}{\MATHIT{\rsp_{\text{cal}}}}
+\providecommand{\Xtst}{\MATHIT{\prd_{\text{tst}}}}
+\providecommand{\ytst}{\MATHIT{\rsp_{\text{tst}}}}
+
+%\providecommand{\rotst}{\MATHIT{\ro_{\text{tst}}}}
+\providecommand{\rotst}{\MATHIT{\ro_{\text{t}}}}
+
+\providecommand{\regap}[1]{\vect{\regasym}\wrapNeParens{#1}}
+\providecommand{\regbp}[1]{\vect{\regbsym}\wrapNeParens{#1}}
+
+\providecommand{\rega}{\regap{}}
+\providecommand{\regb}{\regbp{}}
+\providecommand{\rego}{\MATHIT{b_0}}
+\providecommand{\regp}{\MATHIT{a_0}}
+\providecommand{\dregb}{\dlam{\regb}}
+\providecommand{\drega}{\dlam{\rega}}
+
+\providecommand{\regmodel}{\tuple{\regb,\rego}}
+
+%\providecommand{\regbp}[1]{\vect{\beta_{\text{PLS}}}\wrapNeParens{#1}}
+
+%\providecommand{\cntr}[1]{\MATHIT{\text{center}\wrapNeParens{#1}}}
+\providecommand{\cntr}[1]{\MATHIT{#1^c}}
+%\providecommand{\meen}[1]{\MATHIT{\text{mean}\wrapNeParens{#1}}}
+\providecommand{\meen}[1]{\MATHIT{\overline{#1}}}
+
+
+\providecommand{\Xc}{\cntr{\prd}}
+\providecommand{\yc}{\cntr{\rsp}}
+
+%\providecommand{\Mtxk}[2][{k}]{\MATHIT{\neSUB{\Mtx{#2}}{#1}}}
+%\providecommand{\vectk}[2][{k}]{\MATHIT{\neSUB{\vect{#2}}{#1}}}
+\providecommand{\Mij}[2]{\MATHIT{\neSUB{\Mtx{M}}{\nePAIR{#1}{#2}}}}
+%\providecommand{\Mij}[2]{\MATHIT{\neSUB{\Mtx{M}}{\nePAIR{#1}{#2}}}}
+\providecommand{\Mk}[1][{k}]{\Mtxk[#1]{M}}
+\providecommand{\Lk}[1][{k}]{\Mtxk[#1]{L}}
+\providecommand{\Xk}[1][{k}]{\Mtxk[#1]{\Xsym}}
+\providecommand{\yk}[1][{k}]{\vectk[#1]{\ysym}}
+
+\providecommand{\XLX}[1][2]{\Xk[1]\LAMk{#1}\trans{\Xk[1]}}
+\providecommand{\XLXG}[1][2]{\Xk[0]\LAMk{#1}\trans{\Xk[0]}\GAM}
+
+\providecommand{\vz}{\vect{0}}
+\providecommand{\Mz}{\Mtx{0}}
+
+
+\providecommand{\Wk}[1][{k}]{\vectk[#1]{\Wsym}}
+\providecommand{\Vk}[1][{k}]{\vectk[#1]{\Vsym}}
+\providecommand{\Tk}[1][{k}]{\vectk[#1]{\Tsym}}
+\providecommand{\Pk}[1][{k}]{\vectk[#1]{\Psym}}
+\providecommand{\Zk}[1][{k}]{\vectk[#1]{\Zsym}}
+\providecommand{\Uk}[1][{k}]{\vectk[#1]{\Usym}}
+\providecommand{\Qk}[1][{k}]{\vectk[#1]{\Qsym}}
+
+\providecommand{\Wmt}{\Mtx{\Wsym}}
+\providecommand{\Vmt}{\Mtx{\Vsym}}
+\providecommand{\Tmt}{\Mtx{\Tsym}}
+\providecommand{\Pmt}{\Mtx{\Psym}}
+\providecommand{\Zmt}{\Mtx{\Zsym}}
+\providecommand{\Umt}{\Mtx{\Usym}}
+
+\providecommand{\qk}[1][{k}]{\MATHIT{\neSUB{\qsym}{#1}}}
+\providecommand{\tk}[1][{k}]{\MATHIT{\neSUB{\tsym}{#1}}}
+\providecommand{\rk}[1][{k}]{\MATHIT{\neSUB{\rsym}{#1}}}
+\providecommand{\sk}[1][{k}]{\MATHIT{\neSUB{\ssym}{#1}}}
+\providecommand{\uk}[1][{k}]{\MATHIT{\neSUB{\usym}{#1}}}
+\providecommand{\wk}[1][{k}]{\MATHIT{\neSUB{\wsym}{#1}}}
+\providecommand{\vk}[1][{k}]{\MATHIT{\neSUB{\vsym}{#1}}}
+
+\providecommand{\uTk}[1][{k}]{\vectk[#1]{\undrl{\Tsym}}}
+\providecommand{\uPk}[1][{k}]{\vectk[#1]{\undrl{\Psym}}}
+\providecommand{\uqk}[1][{k}]{\MATHIT{\neSUB{\undrl{\qsym}}{#1}}}
+
+%OLD:
+%\providecommand{\qvc}{\Mtx{\qsym}}   
+%NEW:
+\providecommand{\qvc}{\vect{\qsym}}
+\providecommand{\tvc}{\Mtx{\tsym}}
+\providecommand{\rvc}{\Mtx{\rsym}}
+\providecommand{\svc}{\Mtx{\ssym}}
+\providecommand{\uvc}{\Mtx{\usym}}
+\providecommand{\wvc}{\Mtx{\wsym}}
+\providecommand{\vvc}{\Mtx{\vsym}}
+
+
+\providecommand{\wun}[1]{\MATHIT{\neSUB{\vect{1}}{#1}}}
+\providecommand{\Wun}[1]{\vectk[#1]{1}}
+\providecommand{\wunt}{\wun{\text{tst}}}
+\providecommand{\wunc}{\wun{\text{cal}}}
+\providecommand{\wunro}{\wun{\ro}}
+
+\providecommand{\resd}{\vect{\resym}}
+\providecommand{\rese}[1]{\MATHIT{\neSUB{\resym}{#1}}}
+\providecommand{\resdk}[1][{k}]{\vectk[#1]{\resym}}
+
+\providecommand{\diag}[1]{\MATHIT{\text{diag}\wrapNeParens{#1}}}
+\providecommand{\ffn}[1]{\MATHIT{\ffsym\wrapNeParens{#1}}}
+
+\providecommand{\MSEP}{\text{MSEP}\xspace}
+\providecommand{\RMSEP}{\text{RMSEP}\xspace}
+\providecommand{\MSECV}{\text{MSECV}\xspace}
+\providecommand{\RMSECV}{\text{RMSECV}\xspace}
+\providecommand{\MSETCV}{\text{MSETCV}\xspace}
+\providecommand{\RMSEMCCV}{\text{RMSEMCCV}\xspace}
+
+\providecommand{\SRCEK}{\text{SRCEK}\xspace}
+
+\providecommand{\Qs}[1][{k}]{\MATHIT{Q^2}}
+
+\providecommand{\AIC}{\text{AIC}\xspace}
+\providecommand{\AICc}{\text{AICc}\xspace}
+\providecommand{\BIC}{\text{BIC}\xspace}
+\providecommand{\aBIC}{\text{aBIC}\xspace}
+\providecommand{\GIC}[1][{}]{\MATHIT{\neSUB{\text{GIC}}{#1}}}
+\providecommand{\GIClm}{\GIC[\ln{\ro}]}
+
+\providecommand{\sigmy}{\MATHIT{\sigma^2_{\ysym}}}
+
+\providecommand{\dsm}{\emph{Moisture}}
+\providecommand{\dsk}{\emph{Kalivas}}
+\providecommand{\dsa}{\emph{Artificial}}
+
+%compactitem and such:
+\usepackage[newitem,newenum,increaseonly]{paralist}
+%importing:
+%\usepackage{import}
+%\import*{dirname/}{filenamenodottex}
+
+\usepackage[environments,commands,meshstuff,shortcuts]{sepmath}
+
+\usepackage{varioref}
+\providecommand{\algvref}[1]{Algorithm~\vref{alg:#1}}
+\renewcommand{\algref}[1]{Algorithm~\ref{alg:#1}}
+
+\providecommand{\figvref}[1]{Figure~\vref{fig:#1}}
+
+\newcommand{\keywords}[1]%
+{\def\@keywords{\textbf{#1}}}
+%UNFOLD
+
+\title{\SRCEK{}: A Continuous Embedding of the Channel Selection Problem for WPLS Modeling.}%FOLDUP
+\author{Steven E. Pav\thanks{ Nellcor, 4280 Hacienda Drive, Pleasanton, CA
+94588. Steven.Pav@TycoHealthcare.com.
+I wish to thank M. Forina for providing data sets and for answering my 
+questions regarding his prior work on the topic.
+Some of this research was conducted
+at the time the author was a juror in the court of 
+Judge Donald S. Mitchell, Department \#602, City and County of San Francisco,
+California: ``Everyone's here and we're ready!''}}
+\date{\today}
+\keywords{Chemometrics, PLS, Wavelength Selection.}
+%UNFOLD
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+\begin{abstract}%FOLDUP
+\SRCEK{}, pronounced ``SIR check,'' is a technique for selecting useful
+channels for affine modeling of a response by PLS.  The technique embeds the
+discrete channel selection problem into the continuous space of predictor
+preweighting, then employs a Quasi-Newton (or other) optimization algorithm to
+optimize the preweighting vector.  Once the weighting vector has been
+optimized, the magnitudes of the weights indicate the relative importance of
+each channel.  The relative importances are used to construct $\cl$ different
+models, the \kth{\ms} consisting of the $\ms$ most important channels.  The
+different models are then compared by means of cross validation or an information 
+criterion (\eg \BIC{}), allowing automatic selection of a good subset of the
+channels.  The analytical Jacobian of the PLS regression vector with respect to
+the predictor weighting is derived to facilitate optimization of the latter.
+This formulation exploits the reduced rank of the predictor matrix to gain some
+speedup when the number of observations is fewer than the number of predictors
+(the usual case for \eg IR spectroscopy).  The method compares favourably with
+predictor selection techniques surveyed by Forina \etal  \cite{Forinaetal2004}  
+%An extension of the technique which also detects outliers seems possible.
+\end{abstract}
+\normalsize\textbf{Keywords:~}\@keywords\vskip20pt
+%UNFOLD
+
+\section{Introduction}%FOLDUP
+
+The modern chemometrician suffers from an embarrassment of riches: 
+investigative instruments (\eg NIR spectrometers) commonly allow measurements
+in more discrete ``channels'' than the relevant underlying degrees of freedom or
+the number of objects under investigation.  While a wide array of channels may
+provide greater predictive power, some channels may confound prediction of the
+relevant response, essentially measuring only ``noise.'' Moreover, the
+principle of parsimony dictates that a predictive model must focus on as few of
+the channels as practical, or fewer.
+
+The problem was mitigated by the development of principal component
+regression (PCR) and partial least squares (PLS)
+\cite{dJSetal2004,El2004,RrKn2005,Gg1988,HLetal2003}, two algorithmic techniques
+which essentially project many variate predictors onto a small dimensional
+vector space before building a predictive model.  While these techniques are
+very good at capturing the largest or most relevant underlying variations in
+multivariate predictors, they are not impervious to disinformative or useless
+predictors.  For example, it has been shown that the predictive ability of PLS is
+degraded by a term quadratic in the number of channels.  \cite{NbCrr2005}
+
+A number of clever and theoretically well grounded techniques exist for the
+rejection of useless wavelengths. \cite{Chenetal2005,Hjaetal2003,Ntemetal2004,Bpjetal1999}
+Rather than discuss them in any depth here,
+I refer the reader to the excellent comparative study by Forina \etal
+\cite{Forinaetal2004}  
+%UNFOLD
+
+\section{Problem Formulation}%FOLDUP
+
+Let \prd be an $\ro\cross\cl$ matrix of observed ``predictors'', with each
+column of \prd a ``channel'' of the investigative instrument.  
+Let \rsp be an $\ro$-dimensional column vector of
+corresponding ``responses'' of each of the objects.  
+Each row of \prd, with corresponding element of \rsp, represents an observation
+of an ``object''.
+In the general context of chemometrics, the number
+of objects is generally far fewer than the number of channels:  $\ro\ll\cl$.
+
+An affine predictive model consists of an
+$\cl$-vector \regb and scalar ``intercept'' \rego such that $\rsp \approx
+\prd\regb + \rego\wunro,$ where \wunro is the vector of $\ro$ ones.  When calibrated on a
+given collection of predictors and responses \prd and \rsp, different algorithms 
+produce different affine models.  
+%This paper focuses mainly on PLS modelling of
+%a prescribed order, but much of the formulation of this section is applicable
+%to any technique of building a linear model.
+
+A good model is marked by a residual with small norm.  That is,
+$\sum_i \rese{i}^2$ is small, where $\resd = \rsp - \prd\regb - \rego\wunro$ is the 
+residual.  However, a model which explains the observed data well may give poor
+predictive ability over as-yet-unobserved objects, due to ``overfitting.''
+
+Cross validation (CV) is used to address this deficiency.  The idea is to
+divide the tested objects into two groups, one of which is used to build a
+model \regmodel, the other is used to test the quality of the model.  By leaving
+these validation or test objects out of the calibration, this technique
+simulates the predictive ability of the observed data on unobserved data.
+%(at
+%the expense of reducing the size of the population used to build the predictive
+%model).
+
+Because the division in two groups is arbitrary, the process is
+often repeated in a round robin fashion, with different subdivisions.  The
+quality of prediction of each division is then averaged.  In one
+extreme form, known as ``leave one out'' (LOO) or ``delete-$1$'', the model 
+building and testing is
+performed $\ro$ times, each time with $\ro-1$ objects in the 
+calibration group, and the single remaining object in the test group.
+For comparing different subsets of the channels, Shao proved that delete-$1$ CV
+is asymptotically inconsistent, \ie it has a nonzero probability of
+overfitting. \cite{Shao:1993:LMS,Shao:1997:ATLMS}
+
+%, with each
+%observed object taking a turn as the test group singleton.
+Some terminology is now required.  The norm (more specifically the $2$-norm) of a 
+vector \vect{v} is its Euclidian length:
+\(\norm{\vect{v}} = \sqrt{\sum_i v_i^2} = \sqrt{\ip{\vect{v}}{\vect{v}}}.\)
+The mean square norm of a $k$-dimensional vector, \vect{v} is
+$\norm{\vect{v}}^2 / k$.  The mean squared error of a model \regmodel for given
+data \prd and \rsp is the mean square norm of the residual $\rsp - \prd\regb -
+\rego\wun{}.$ The mean squared error of cross validation (\MSECV) is the mean over each cross validation group of the mean square error of the model built by the calibration
+group on the test group:
+\[\MSECV = \oneby{J}\sum_{j=1}^J \oneby{\msz{j}}\norm{\rsp_j - \prd_j\regb_j -
+{\rego}_j\wun{\msz{j}}}^2,\]
+where $\prd_j$ and $\rsp_j$ are the predictors and responses of the \kth{j}
+test group which contains \msz{j} objects, while \tuple{\regb_j,{\rego}_j} is built 
+from the \kth{j} calibration group.  The mean squared error of prediction (\MSEP) of a
+model is the mean square error of the data used to build the model:
+\(\MSEP = \norm{\rsp - \prd \regb - \rego \wunro}^2/{\msz{}},\) where \regmodel is built
+using (all) the data \prd and \rsp.
+
+The prefix ``root'' refers to square root, thus the
+root mean squared error of cross validation (\RMSECV) is $\sqrt{\MSECV}$;
+similarly for \RMSEP, \etc
+
+%Q SQUARED
+%Q^2 wasn't being used
+%The \RMSECV{} has the same units as the response.  Thus while a smaller
+%\RMSECV{} usually signifies a better model building technique, interpretation
+%of \RMSECV{}
+%is difficult without comparison to the distribution of the responses.  Thus a
+%modelling technique is often compared to a trivial modeller, one which
+%approximates the response by the mean of the calibration responses, and thus
+%ignores the predictors altogether.  The \MSECV{} of this technique is a weighted
+%average estimate of the variance of the observed responses:
+%\[\MSETCV = \oneby{J}\sum_{j=1}^J \oneby{\msz{j}}\norm{\rsp_j - \bar{\rsp_j}}^2,\]
+%where $\bar{\rsp_j}$ is the mean of the calibration responses in the \kth{j}
+%cross validation group\tsidenote{This is the mean over the calibration
+%responses, not the test responses.}.  The ``T'' stands for ``trivial,''
+%although this is my terminology and is nonstandard.
+%Comparing the \MSECV{} to the \MSETCV{} gives the cross-validation percent explained
+%variance of the model building technique, 
+%\(\Qs = 100\%\wrapparens{\MSETCV - \MSECV}/{\MSETCV}.\)
+
+The goal of channel selection appears to be, given the observed
+data, the CV groups and a model building technique, select the subset of the
+$n$ available columns of
+\prd which minimizes \RMSECV{} %(or equivalently, maximizes \Qs) 
+when only those
+columns of \prd are used in the model building and testing.  In this
+formulation the number of possible solutions is $2^\cl$; exhaustive search
+becomes impractical when $\cl$ is larger than about 17.  Subset selection
+heuristics such as Tabu search, Simulated Annealing (SA) and Genetic Algorithms
+(GA) which generate and test subsets of the $\cl$ available channels can only hope
+to explore a small part of the $2^\cl$ sized discrete space of possible subsets,
+and are susceptible to backtracking and falling into local minima.  
+\cite{Hjaetal2003,Ntemetal2004,Bpjetal1999}  Even when restricted
+to subsets of no more than a given number of channels, say $d,$ 
+heuristic search can cover only a small part of the search space, which has
+size around $\cl^d$.
+
+Considerable progress was made on the problem by the introduction of iterative
+predictor weighting (IPW) by Forina \etal \cite{Forinaetal1999} This
+channel selection technique reformulates the problem as one of selecting a
+vector in $\cl$ dimensional Euclidian space, hereafter denoted \reals{n}, rather
+than on the discrete space of binary $\cl$-dimensional 
+vectors. %, hereafter $\sngtn{0,1}^\cl$.  
+In terms of size of the search space there would seem to be no
+advantage to this reformulation.  However, I argue that the continuous
+embedding allows the importance of each channel to be evaluated and changed
+simultaneously, in parallel, rather than serially.   This will lead to a channel
+selection technique with runtime asymptotically linear in the number of channels.
+
+Predictive weighting can be viewed as a preprocessing step.  Let $\vlam \in
+\reals{\cl}$ be a vector of weights\tsidenote{For this note, we ignore the
+possibility of \vlam having a zero element.}.  Let \LAM be the diagonal
+$\cl\cross\cl$ matrix whose diagonal is the vector \vlam.  Hereafter I will let
+\diag{\vect{v}} denote the diagonal matrix whose diagonal is \vect{v}, so $\LAM
+= \diag{\vlam}$.  The \vlam-weighted predictor matrix is the
+product $\prd\LAM$:  the \kth{k} column of the weighted predictor matrix is the
+\kth{k} column of \prd times \lame{k}.  Weighted predictors are then used in
+the cross validation study, both in the calibration and test sets.  As such, the
+quality of the cross validation (\RMSECV{})
+%(\RMSECV{} or \Qs) 
+can be viewed as a scalar
+function of the vector \vlam, once the data and CV groups and model building
+method (and order) have been fixed.
+
+Note that when the regression model \regmodel is built by ordinary least squares
+(OLS), the quality of cross validation is constant with respect to \vlam. This
+occurs because the weighted regression model output by OLS is constant with
+respect to nonzero predictor weighting, \ie $\LAM\regbp{\vlam}$, is constant over
+all \vlam with nonzero elements.  PLS, however, does not share this
+property, and the quality of cross validation is affected by predictor
+weighting.  When used as a preprocessing technique prior to the application of
+PLS, the usual strategy is to apply predictor weighting \vlam where $\lame{k} =
+1/{\hat{\sigma}_k}^2,$ where ${\hat{\sigma}_k}^2$ is the sample standard
+deviation of the \kth{k} channel of the predictors based on the observations 
+in the entire sample
+\prd, a technique called ``autoscaling.''  There is no reason to believe
+\apriori that this choice of \vlam gives good cross validation.  Rather an
+\apriori choice of weighting should depend on knowledge of the test instrument
+or the tested objects.  Alternatively, one can let the data inform the choice
+of predictor weighting.
+
+The method I propose is to minimize the \RMSECV{} as a function of \vlam.  This
+can be achieved by any of a number of modern optimization algorithms,
+including BFGS \cite{NjWsj1999,liu89limited}, which I explore and advocate
+here.  Once a local minimum has been found, the magnitude of the elements of
+the optimal \vlam suggest the importance of the corresponding channels to the 
+observed data.  This ordering suggest $\cl$ different models, the \kth{\ms}
+consisting of the first $\ms$ channels by order of decreasing importance.  These
+models can then be compared using any model selection technique, \eg
+minimization of \RMSECV or an information criterion.
+\cite{Shao:1993:LMS,Shao:1997:ATLMS,Ah:1974,Bk2004,CjeNaa1999}
+
+I call this technique ``SRCEK{}'' (pronounced ``SIR check'').  In Slovene,
+{\emph{sr\v{c}ek}} means ``sweetheart.''  Like many acronyms, the construction
+of this acronym was rather forced;  it originally stood for ``Selecting
+Regressors by Continuous Embedding in K-dimensions,'' but I found it more
+natural to let $\cl$ stand for the number of dimensions.
+%I will describe the SRCEK{} technique and its implementation in full detail
+%in the sequel.
+
+%UNFOLD
+
+\section{(W)PLS Regression}%FOLDUP
+
+The assumption underlying PLS regression is that predictor and response
+take the form
+\begin{align}
+\Xk[]&=\uTk[0]\trans{\uPk[0]} + \uTk[1]\trans{\uPk[1]} + \ldots +
+\uTk[l]\trans{\uPk[l]} + \Xe,\label{eqn:Xdeco}\\
+\yk[]&=\uTk[0]{\uqk[0]} + \uTk[1]{\uqk[1]} + \ldots + \uTk[l]{\uqk[l]} +
+\ye,\label{eqn:ydeco}
+\end{align}
+where the vectors \uTk are orthogonal, and the remainder terms, \Xe and \ye, are
+random variables.  The vector \uTk[0] is \wun{}, the vector of all ones.
+It is also assumed that the response remainder term, \ye, is homoscedastic, 
+\ie
+\[\E{\ye\trans{\ye}} = \sigmy\eye.\]
+When this assumption cannot be supported, weighted PLS (WPLS) regression is
+appropriate.  \cite{Hi1988,DBLP:journals/bioinformatics/FortL05,1998AIPC..430..253H}
+Let \GAM be a symmetric positive definite matrix such that
+$\GAM = \sclr{} \invs{\E{\ye\trans{\ye}}},$ for some (perhaps unknown) scalar
+\sclr{}.
+Weighted PLS assumes a decomposition of \Xk[] and \yk[] as in
+equations~\ref{eqn:Xdeco} and \ref{eqn:ydeco}, but with the property that the 
+vectors \uTk are \GAM-orthogonal: $\uTk[k]\GAM\uTk[j] = 0$ if $k\ne j$.
+
+WPLS regression with $\fc$ factors computes $\ro \cross \fc$ matrix \Tmt,
+$\cl\cross\fc$ matrix \Pmt and $\fc$ vector \qvc such that
+\[\Xk[] \approx \Tk[0]\trans{\Pk[0]} + \Tmt \trans{\Pmt},\quad\text{and}\quad
+\yk[] \approx \Tk[0]\qk[0] + \Tmt \qvc,\]
+where \Tk[0] is the vector of all ones, and \trans{\Pk[0]} and \qk[0] are the
+(\GAM-weighted) means of \Xk[] and \yk[].
+The affine model constructed by WPLS takes the 
+form $\regb = \Wmt \invs{\Parens{\trans{\Pmt}\Wmt}} \qvc,$ 
+for some matrix \Wmt, with intercept $\rego = \qk[0] - \trans{\Pk[0]}\regb$.  
+Thus
+\[\Xk\regb + \Tk[0]\rego 
+\approx \Tk[0]\trans{\Pk[0]}\regb + \Tmt\trans{\Pmt} \Wmt
+\invs{\Parens{\trans{\Pmt}\Wmt}} \qvc + \Tk[0]\qk[0] - \Tk[0]\trans{\Pk[0]}\regb
+= \Tk[0]\qk[0] + \Tmt\qvc \approx \yk[].\]
+
+%The PLS regression technique 
+%%, which is an acronym for ``Partial Least Squares'' or ``Projection to
+%%Latent Structures'' is a way of building a linear model for data \prd and \rsp
+%%with a limited rank.  The method 
+%decomposes the predictor and response as
+
+%The first term in each expansion
+%effectively centers the data, that is \Tk[0] is chosen as a \wun{}, the vector of all
+%ones, and $\Pk[0] = \trans{\meen{\Xk[]}},$ and $\qk[0] = \meen{\yk[]}.$
+
+The use of the words ``weight'' or ``weighting'' in this context is
+traditional, and parallels the usage for ordinary least squares.  It should not
+be confused with the predictor weighting applied to the predictors.  To distinguish 
+them, %FIX object or predictor weights?
+I will refer to \GAM{} as the response weights.  For the remainder of this
+paper, I will assume that \GAM{} is a diagonal vector, $\GAM = \diag{\vgam}.$
+This is not necessary for correctness of the algorithm, only for its fast
+runtime, for which a sufficiently sparse \GAM would also
+suffice.
+%For simplicity, the reader may pretend that $\GAM{} = \eye{}.$
+%UNFOLD
+
+\section{\RMSECV{} and its Gradient}%FOLDUP
+
+Given fixed data, I will presuppose the existence of a selected order, $\fc$.
+The selection of $\fc$ should be informed by the underlying structure of the
+objects under investigation, or by an automatic technique.
+\cite{Forinaetal2004}  
+In the chemometric context, the number of factors should be less (preferably
+far less) than the number of objects: $\fc\le\ro$.
+Let $\ffn{\vlam}$ be the \RMSECV{} for the CV when the CV groups are fixed, and
+the affine model is built by $l$-factor WPLS with \vgam given, and using
+predictor weights \vlam.  To employ quasi-Newton
+minimization, the gradient of \ffn{} with respect to \vlam must be computed.
+While this can be approximated numerically with little extra programmer effort,
+the computational overhead can be prohibitive.  Thus I develop the analytic
+formulation of the gradient.   At this point, the reader may wish to consult
+the brief guide to vector calculus provided in \secref{bguide}.
+
+In the general formulation, there is an response weight associated with each
+observation.   These weights should be used in both the model construction
+and error computation phases.  Thus, I rewrite the \RMSECV{} as a weighted
+\RMSECV{} as follows:
+\[\ffn{\vlam} = \sqrt{\oneby{J}\sum_{j=1}^J 
+\frac{ \ip{\resdk[j]}{\GAMj[j]\resdk[j]}}{\ip{\Wun{j}}{\GAMj[j]\Wun{j}}} },\]
+where $\resdk[j]$ is the residual of the \kth{j} test group, \GAMj[j] is
+the diagonal matrix of the response weights of the \kth{j} test group, and
+\Wun{j} is the appropriate length vector of all ones.  The gradient of
+this is
+\[\glam{\ffn{\vlam}} = \oneby{\ffn{\vlam}}\oneby{J}\sum_{j=1}^J
+\oneby{\ip{\Wun{j}}{\GAMj[j]\Wun{j}}} \trans{\dlam{\resdk[j]}}\GAMj[j]\resdk[j],\]
+Each residual takes the form
+\[\resd = \ytst - \Parens{\Xtst\LAM\regbp{\vlam} + \wunt\rego\Parens{\vlam}},\]
+thus the Jacobian of the residual is 
+\begin{equation}
+\dlam{\resd} = - \Xtst\Parens{\diag{\regbp{\vlam}} +
+\LAM\dlam{\regbp{\vlam}}} - \wunt\trans{\glam{\rego}}.
+\label{eqn:dresd}
+\end{equation}
+(Consult \eqnref{jprodrule} and \eqnref{diagrule} in \secref{bguide} for
+proofs.)  Here and in the following, I use \Xcal, \ycal to refer to the
+calibration objects, and \Xtst and \ytst to refer to the test objects of a
+single cross validation partitioning.
+This reduces the problem to the computation of the Jacobian and gradient of the WPLS
+regression vector and intercept with respect to \vlam.  
+
+%Before deriving the analytic
+%Jacobian, I will briefly address the issue of channel centering.  In the usual
+%CV formulation, a model of the form $\rsp \approx \prd \regb + \rego\wun{}$ is
+%built, where \rego is a constant chosen such that the model perfectly predicts
+%the calibration mean predictors and responses.  That is, the means of the
+%calibration data are computed, \meen{\ycal} and \meen{\Xcal}, the linear model is
+%built using the centered predictors and responses, then \rego is chosen as
+%\[\rego = \meen{\ycal} - \meen{\Xcal}\LAM\regbp{\vlam}.\]
+%Using this centered algorithm the residual is given as 
+%\begin{align*}
+%\resd &= \ytst - \Parens{\Xtst\LAM\regbp{\vlam} + \rego\wunt} 
+%= \ytst - \Xtst\LAM\regbp{\vlam} - \Parens{\meen{\ycal} -
+%\meen{\Xcal}\LAM\regbp{\vlam}}\wunt,\\
+%&= \ytst - \meen{\ycal}\wunt 
+%- \Xtst\LAM\regbp{\vlam} + \meen{\Xcal}\LAM\regbp{\vlam}\wunt,\\
+%&= \Parens{\ytst - \meen{\ycal}\wunt} - \Parens{\Xtst - \wunt\meen{\Xcal}}
+%\LAM\regbp{\vlam}.
+%\end{align*}
+%And thus in this case the Jacobian of the residual is
+%\begin{equation}
+%\dlam{\resd} = - \Parens{\Xtst - \wunt\meen{\Xcal}} \Parens{\diag{\regbp{\vlam}} +
+%\LAM\dlam{\regbp{\vlam}}},
+%\label{eqn:dresdII}
+%\end{equation}
+%where $\regbp{\vlam}$ is computed from the centered calibration predictor and
+%responses.
+%
+%UNFOLD
+
+\section{WPLS Computation}%FOLDUP
+
+A variant of the canonical WPLS computation is given in \algvref{vanillapls}.
+This algorithm is different from the usual formulation in that the vectors 
+\Wk, \Tk and \Pk are not normalized; it is simple to show, however, that the 
+resultant vectors \Wk, \Tk and \Pk are identical to those produced by the 
+canonical computation, \emph{up to scaling}.
+The change in scaling does not affect the resultant regression vector,
+\regb, nor does it change the matrix \Xk.
+
+\begin{algorithm}[htb!]%FOLDUP
+\caption{Algorithm to compute the WPLS regression vector.\label{alg:vanillapls}}
+\alginout{$\ro\cross\cl$ matrix and $\ro$ vector, number of
+factors, and a diagonal response weight matrix.}{The regression vector and
+intercept.}
+\algname{WPLS}{$\Xk[0], \yk[], \fc, \GAM=\diag{\vgam}$}
+\begin{algtab}
+%	Let $\Xk[1] \gets \Xc,$ and $\yk[] \gets \yc$.\\
+	$\Tk[0] \gets \wun{}$.\\
+	\algforto{$k=0$}{$\fc$}
+		$\tk \gets \trans{\Tk}\GAM\Tk.$\hfill(Requires \bigtheta{\ro} flops per loop.)\\
+		%??
+		%$\Pk \gets \trans{{\Xk}} \Tk / \tk.$\\
+		$\Pk \gets \trans{{\Xk}} \GAM\Tk / \tk.$\hfill(Requires \bigtheta{\ro\cl} flops per
+		loop.)\\
+		$\qk \gets \trans{{\yk[]}} \GAM\Tk / \tk.$\hfill(Requires \bigtheta{\ro} flops per
+		loop.)\\
+		\algif{$\trans{\yk[]}\GAM\Tk = 0$}
+				Maximum rank achieved; Let $\fc = k$ and break the for loop.\\
+		\algend
+		\algif{$k < \fc$}
+			$\Xk[k+1] \gets \Xk - \Tk \trans{\Pk}.$\hfill(Requires \bigtheta{\ro\cl} flops
+			per loop.)\label{algstep:PLSupX}\\
+			$\Wk[k+1] \gets \trans{{\Xk[k+1]}}\GAM\yk[].$\hfill(Requires \bigtheta{\ro\cl} flops per loop.)\\
+			$\Tk[k+1] \gets \Xk[k+1] \Wk[k+1].$\hfill(Requires \bigtheta{\ro\cl} flops per loop.)\\
+		\algend
+%	\label{algstep:PLSupy}
+%		$\yk[k+1] \gets \yk - \Tk q_k.$\\
+	\algend
+	Let \Wmt be the matrix with columns $\Wk[{\onetox{l}}].$  Similarly
+	define \Mtx{\Psym}, \vect{q}.\\
+	$\regb \gets \Wmt \invs{\Parens{\trans{\Pmt}\Wmt}} \qvc.$
+		(Requires \bigtheta{\cl\fc} flops, using back substitution.)\\
+	$\rego \gets \qk[0] - \trans{\Pk[0]}\regb.$\\
+\algreturn \tuple{\regb, \rego}
+\end{algtab}
+\end{algorithm}%UNFOLD
+
+I prove some properties of \algref{vanillapls}, nearly all of which hold for the
+canonical WPLS algorithm:
+\begin{lemma}\label{lem:vplsprops}%FOLDUP
+Let \Xk, \GAM, \Wk, \Tk, and \Pk be as in \algref{vanillapls}, then:
+%the following hold for those $k=\zerotox{l}$ for which the terms are defined:
+\begin{compactenum}
+\item $\ip{\Wk[k]}{\Pk[k]} = 1$, for $k\ge1$.
+\label{item:wkpk}
+\item $\Xk[k+j]\Wk[k] = \vz$ for all $j \ge 1$, and $k\ge1$.
+\label{item:xwk}
+\item $\ip{\Wk[k+j]}{\Wk[k]} = 0$ and $\ip{\Pk[k+j]}{\Wk[k]} = 0$ for all $j
+\ge 1$, and $k\ge1$.
+\label{item:wkwk}
+\item $\trans{\Xk[k+j]}\GAM\Tk[k] = \vz$ for all $j \ge 1$, and $k\ge0$.
+\label{item:xtk}
+\item $\ip{\Tk[k+j]}{\GAM\Tk[k]} = 0$ for all $j \ge 1$, and $k\ge0$.
+\label{item:tktk}
+\item $\Wk[k+1] = \Wk[k] - \Pk[k]\ip{\Tk[k]}{\GAM\yk[]}$ for $k\ge1$, and thus
+$\Pk[k] \in \operatorname{span}\sngtn{\Wk[k],\Wk[k+1]}.$
+\label{item:pkspan}
+\item 
+$\ip{\Wk[k+j]}{\Pk[k]} = 0$, and
+$\ip{\Pk[k+j]}{\Pk[k]} = 0$
+for all $j > 1$, and $k\ge1$.  (Note the strict inequality
+for $j$.)
+\label{item:wklpk}
+\end{compactenum}
+\end{lemma}%UNFOLD
+\begin{proof}%FOLDUP
+First note that the update of \Xk is given by 
+\[\Xk[k+1] = \Xk - \Tk \trans{\Pk} =
+\Parens{\eye - \frac{\Tk\trans{\Tk}\GAM}{\tk}} \Xk = \Mk\Xk.\]
+It can also be expressed as 
+\[\Xk[k+1] = \Xk - \Tk \trans{\Pk} = \Xk \Parens{\eye - \Wk\trans{\Pk}} =
+\Xk\Lk,\]
+for $k>0$.
+Now the parts of the lemma:
+\begin{compactenum}
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:wkpk}]%
+\[\ip{\Wk}{\Pk} = \frac{\trans{\Wk}\trans{\Xk}\GAM\Tk}{\tk} =
+\frac{\trans{\Tk}{\GAM\Tk}}{\tk} = \frac{\tk}{\tk} = 1.\]
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:xwk}] 
+First I prove $\Xk[k+1]\Wk = \vz$ as follows:
+\begin{align*}
+\Xk[k+1]\Wk &= \Xk \Parens{\eye - \Wk\trans{\Pk}}\Wk\\
+&=\Xk \Parens{\Wk - \Wk \ip{\Pk}{\Wk}} = \Xk \Parens{\Wk - \Wk} = \vz,
+\end{align*} which follows because
+$\ip{\Pk}{\Wk} = 1$
+To prove for general $j,$ we note that 
+$\Xk[k+j] = \Mk[k+j-1]\Xk[k+j-1] = \Mk[k+j-1]\Mk[k+j-2]\Xk[k+j-2] = \ldots =
+\Mtx{M} \Xk[k+1]$, so 
+$\Xk[k+j]\Wk = \Mtx{M}\Xk[k+1]\Wk = \Mtx{M}\vz = \vz.$
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:wkwk}] This is trivial because, for example, 
+$\ip{\Wk[k+j]}{\Wk} = \trans{\yk[]}\GAM\Xk[k+j]\Wk = \trans{\yk[]}\GAM\vz$, following
+from the previous part.  Similarly for \ip{\Pk[k+j]}{\Wk}.
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:xtk}] Again I prove for $j=1$ first:
+\begin{align*}
+\trans{\Xk[k+1]}\GAM\Tk &= \trans{\Xk} \trans{\Parens{\eye -
+\frac{\Tk\trans{\Tk}\GAM}{\tk}}}\GAM\Tk\\
+&= \trans{\Xk} \Parens{\GAM\Tk - \frac{\GAM\Tk\trans{\Tk}\GAM\Tk}{\tk}}\\
+&= \trans{\Xk} \GAM\Parens{\Tk - \frac{\Tk\tk}{\tk}}
+= \trans{\Xk} \GAM\Parens{\Tk - \Tk} = \vz.
+\end{align*}
+Similarly to above we can prove for $j > 1$ by writing $\Xk[k+j] = \Xk[k+1]\Mtx{L}$.
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:tktk}] By the previous result, $\ip{\Tk[k+j]}{\GAM\Tk} =
+\trans{\Wk[k+j]}\trans{\Xk[k+j]}\GAM\Tk = 
+\trans{\Wk[k+j]}\vz = 0$.
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:pkspan}] 
+This is by simple definition:
+\[\Wk[k+1] = \trans{\Xk[k+1]}\GAM\yk[] = \trans{\Parens{\Xk[k] -
+\Tk[k]\trans{\Pk[k]}}}\GAM\yk[] = \Wk[k] - \Pk[k]\trans{\Tk[k]}\GAM\yk[].\]
+Thus by rearranging, \Pk[k] is a linear combination of \Wk[k] and \Wk[k+1].
+%%%%%%%%%%%%%%
+%\item[\bf \ref{item:pkpk}] 
+%This part is more challenging to remember.  First use \itemref{wkwk} to assert
+%$0 = \ip{\Pk[k+l]}{\Wk[k+1]},$ then rewrite \Xk[k+1] in \Wk[k+1]:
+%\begin{align*}
+%0 &= \ip{\Pk[k+l]}{\Wk[k+1]} 
+%= \ip{\Pk[k+l]}{\Bracks{\trans{\Parens{\Xk - \Tk\trans{\Pk}}} \yk[]}}\\
+%0 &= \ip{\Pk[k+l]}{\Bracks{\Wk - \Pk\trans{\Tk}\yk[]}}
+%= \ip{\Pk[k+l]}{\Wk} - \ip{\Pk[k+l]}{\Pk\trans{\Tk}\yk[]}\\
+%0 &= 0 - \Parens{\ip{\Pk[k+l]}{\Pk}}\trans{\Tk}\yk[],
+%\end{align*}
+%and thus either $\ip{\Pk[k+l]}{\Pk} = 0$ as desired or 
+%$\trans{\Tk}\yk[] = 0$.  The latter is equivalent to $\qk = 0.$  However,
+%the algorithm detects this possibility and terminates if it holds.
+%
+%I claim that if the latter holds the algorithm should
+%terminate as the full rank of \Xk[1] is no greater than $k$. I leave it as an
+%exercise for the reader to show that if 
+%$\trans{\Tk}\yk[] = 0$ then $\Wk[k+1] = \Wk[k],$ and that $\Tk[k+1] = \vz,$
+%and thus \tk[k+1], \Pk[k+1] and \Xk[k+2] are undefined and the algorithm breaks
+%down if allowed to continue.
+
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:wklpk}] 
+From \itemref{pkspan}: 
+$\ip{\Wk[k+j]}{\Pk} = \ip{\Wk[k+j]}{\Parens{\sclr[1]\Wk[k] + \sclr[2]\Wk[k+1]}}.$
+Since $j>1$, by orthogonality of the \Wk[] (\itemref{wkwk}), the right hand
+side is zero, as needed.
+
+For the \Pk[], first use \itemref{wkwk} to assert
+$0 = \ip{\Pk[k+j]}{\Wk[k+1]},$ then rewrite \Xk[k+1] in \Wk[k+1]:
+\begin{align*}
+0 &= \ip{\Pk[k+j]}{\Wk[k+1]} 
+= \ip{\Pk[k+j]}{\Bracks{\trans{\Parens{\Xk - \Tk\trans{\Pk}}}\GAM\yk[]}}\\
+0 &= \ip{\Pk[k+j]}{\Bracks{\Wk - \Pk\trans{\Tk}\GAM\yk[]}}
+= \ip{\Pk[k+j]}{\Wk} - \ip{\Pk[k+j]}{\Pk\trans{\Tk}\GAM\yk[]}\\
+0 &= 0 - \Parens{\ip{\Pk[k+j]}{\Pk}}\trans{\Tk}\GAM\yk[],
+\end{align*}
+and thus either $\ip{\Pk[k+j]}{\Pk} = 0$ as desired or 
+$\trans{\Tk}\GAM\yk[] = 0$.  The algorithm detects this possibility and terminates
+if it holds.
+
+%\item $\ip{\Pk[k+j]}{\Pk[k]} = 0$, and
+%$\ip{\Wk[k+j]}{\Pk[k]} = 0$
+%for all $j > 1.$  (Note the strict inequality
+%for $j$.)
+\end{compactenum}
+\end{proof}%UNFOLD
+
+Thus, as in canonical WPLS, the matrix $\trans{\Pmt}\Wmt$ is bidiagonal upper
+triangular; however, for this variant, the matrix has unit main diagonal.
+This variant of the algorithm is more amenable to a Jacobian computation,
+although conceivably it could be susceptible to numerical underflow or
+overflow.
+%UNFOLD
+
+\section{A Rank Sensitive Implicit WPLS Algorithm}%FOLDUP
+
+I now present a different way of computing the same results as
+\algref{vanillapls}, but by reusing old computations to compute seemingly
+unnecessary intermediate quantities which will be useful in the Jacobian computation.  
+Moreover, the Jacobian computation will exploit the assumption that $\ro\ll\cl$ to gain 
+an asymptotic reduction in runtime.  This is achieved by performing the
+computations in the $\ro$-dimensional space, that is in the quantities related
+to \yk[] and \Tk, and avoiding the $\cl$-dimensional quantities \Wk and \Pk.
+
+The variant algorithm introduces the ``preimage'' vectors \Vk and the preimage
+of the regression coefficient $\rega$.  By preimage, I mean in
+$\trans{\Xk[0]}\GAM$, thus, as
+an invariant, these vectors will satisfy $\Wk = \trans{\Xk[0]}\GAM\Vk$ and $\regb =
+\trans{\Xk[0]}\GAM\rega.$
+The variant algorithm also computes the vectors $\Qk[k] =
+{\Xk[0]\trans{\Xk[0]}\GAM} \Vk[k]$, and $\Uk[k] = \Qk[k] -
+\Tk[0]\trans{\Tk[0]}\GAM\Qk[k]/\tk[0]$, and the
+scalars 
+%The variant algorithm also uses the scalars
+$\rk = \ip{\yk[]}\GAM{\Tk}$ and $\wk = \trans{\Tk}\GAM\Uk[k+1]/\tk$.
+%
+%\ip{\Pk[k]}{\Wk[k+1]}$.
+
+%Moreover, the algorithm computes the appropriate offdiagonal element of the 
+%matrix $\Mij{}{} = \trans{\Mtx{\Psym}}\Mtx{\Wsym}$ at each iteration. 
+Note that
+any explicit updating of the matrix \Xk is absent from this version of the algorithm,
+rather the updating is performed implicitly.  This will facilitate the
+computation of the Jacobian when \Xk[0] is replaced in the sequel by
+$\Xk[0]\LAM$.  The following lemma confirms that this variant form of the
+algorithm produces the same results as \algref{vanillapls}, that is the same
+vectors \Tk[] and \vect{\qk[]}, consistent vectors \Vk[], and produces the same
+affine model \regmodel.
+
+\begin{lemma}\label{lem:oddplsprops}%FOLDUP
+Let \Xk, \GAM, \Wk, \Tk, \Pk, and \qk be as in \algref{vanillapls}.  
+Let \Vk be the preimage of \Wk, \ie \Vk is a vector such that $\Wk =
+\trans{\Xk[0]}\GAM\Vk$.  
+Let $\Qk[k] = {\Xk[0]\trans{\Xk[0]}\GAM} \Vk[k]$, and 
+$\Uk[k] = \Qk[k] - \Tk[0]\trans{\Tk[0]}\GAM\Qk[k]/\tk[0]$ for $k\ge1$.
+Let
+%The variant algorithm also uses the scalars
+$\rk = \ip{\yk[]}\GAM{\Tk}$, and $\wk = \trans{\Tk}\GAM\Uk[k+1]/\tk$ for
+$k\ge0.$
+%
+%Let $\rk = \ip{\yk[]}\GAM{\Tk}$ and $\wk =
+%\ip{\Pk[k]}{\Wk[k+1]}.$  
+%Moreover, let $\Mij{}{} = \trans{\Mtx{\Psym}}\Mtx{\Wsym}$. 
+Then the following hold:
+\begin{compactenum}
+%\item $\Wk[k] = \Wk[k-1] - \Pk[k-1]\rk[k-1]$ for $k>1$.
+%\label{item:rewk}
+%%%%%
+%\item $\wk = 1 - \sk[k-1]\rk[k-1],$ for $k\ge1$.  Also $\Mij{k-1}{k} = \wk$ for
+%$k>1$.
+%\label{item:defMIJ}
+%%%%%
+\item $\Pk = \trans{\Xk[0]}\GAM\Tk / \tk,$ for $k\ge0$.
+\label{item:repk}
+%%%%%
+\item $\wk = \ip{\Pk[k]}{\Wk[k+1]}$ for $k\ge1$, and $\wk[0] = 0$.
+%\item $\wk = \trans{\Tk}\GAM\Xk[0]\trans{\Xk[0]}\GAM\Vk[k+1]/\tk.$
+\label{item:defwk}
+%%%%%
+%\item $\Tk = - \rk[k-1]\Zk[k-1] + \rk[k-1] \uk[k-1] \Tk[k-2] + \rk[k-1]
+%\sk[k-1]\Tk[k-1],$ for $k\ge 1,$ with \Tk[-1] assumed to be \vz.
+%\item $\Tk[k+1] = \Xk[0]\trans{\Xk[0]}\GAM\Vk[k+1] - \wk[k] \Tk[k].$ for $k \ge 0.$
+\item $\Tk[k+1] = \Uk[k+1] - \wk[k] \Tk[k]$ for $k \ge 0.$
+\label{item:retk}
+%%%%%
+%\item $\rk = -\rk[k-1] \wk,$ for $k\ge1$.
+%\label{item:rerk}
+%%%%%
+\item 
+$\Vk[k+1] = \Vk[k] - \qk[k]\Tk[k]$ for $k\ge0$,
+where $\Vk[0] = \yk[]$ by convention.
+\label{item:revk}
+%%%%%
+%\item $\uk = \trans{{\Tk}}\Xk[1]\trans{\Xk[1]} \Tk[k-1] /(\tk\tk[k-1])$, and 
+%$\sk = \trans{{\Tk}}\Xk[1]\trans{\Xk[1]} \Tk /\tk^2$ for $k > 1$.
+%\item $\uk = \trans{{\Tk[k-1]}}\Zk/\tk[k-1]$ for $k\ge1$,  and 
+%$\sk = \trans{{\Tk}}\Zk/\tk$ for $k \ge 1$.
+%\label{item:reuksk}
+\end{compactenum}
+\end{lemma}%UNFOLD
+\begin{proof}%FOLDUP
+The parts of the lemma:
+%A brief review of why \algref{oddpls} gives the same results as
+%\algref{vanillapls}.  To distinguish between the two variants, the latter is
+%referred to as the ``explicit'' algorithm, while the new algorithm is called
+%``implicit.''
+%The implicit version of \Wk follows from the definition of \Wk and \Xk in the
+%explicit algorithm:
+\begin{compactenum}
+%%%%%%%%%%%%%%
+%\item[\bf \ref{item:rewk}]%
+%This is a restatement of \itemref{pkspan} in \lemref{vplsprops}.
+%%%%%%%%%%%%%%
+%\item[\bf \ref{item:defMIJ}]%
+%By definition of \wk:
+%\[\wk \defeq \trans{\Pk[k-1]}\Wk[k] 
+%=\trans{\Pk[k-1]}\Parens{\Wk[k-1] - \Pk[k-1]\rk[k-1]}
+%=1 - \sk[k-1]\rk[k-1],\]
+%using \itemref{wkpk} and \itemref{pkspan} from \lemref{vplsprops}.
+%By definition of \Mij{}{}, $\Mij{k-1}{k} = \wk$ for $k>1$.
+
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:repk}]%
+Rewrite \Xk, then use the fact that the \Tk[] are \GAM-orthogonal 
+(\lemref{vplsprops} \itemref{tktk}):
+\begin{align*}
+\Pk &= \trans{\Xk}\GAM\Tk / \tk = 
+	\trans{\Parens{\Xk[0] - \Tk[0]\trans{\Pk[0]} - \ldots 
+%	- \Tk[k-2]\trans{\Pk[k-2]} 
+	- \Tk[k-1]\trans{\Pk[k-1]}}}\GAM\Tk / \tk\\
+ &= \Parens{\trans{\Xk[0]} - \Pk[0]\trans{\Tk[0]} - \ldots
+	- \Pk[k-1]\trans{\Tk[k-1]}}\GAM\Tk / \tk\\
+ &= \trans{\Xk[0]}\GAM\Tk / \tk.
+\end{align*}
+
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:defwk}]%
+By definition, and \GAM-orthogonality of the \Tk[]:
+\begin{align*}
+\wk &= \trans{\Tk}\GAM\Uk[k+1]/\tk 
+	= \trans{\Tk}\GAM\Parens{\Qk[k+1] - \Tk[0]\sclr{}}/\tk 
+	= \trans{\Tk}\GAM\Qk[k+1]/\tk,\\
+ &= \trans{\Tk}\GAM \Xk[0]\trans{\Xk[0]}\GAM \Vk[k+1]/\tk
+  = \Parens{\trans{\Tk}\GAM \Xk[0]/\tk}\Parens{\trans{\Xk[0]}\GAM \Vk[k+1]}\\
+ &= \trans{\Pk}\Wk[k+1],\quad\text{using \itemref{repk}.}
+\end{align*}
+To show $\wk[0] = 0$ it suffices to note that \Uk is chosen to be
+\GAM-orthogonal to \Tk[0]:
+\[\trans{\Tk[0]}\GAM\Uk 
+= \trans{\Tk[0]}\GAM\Parens{\Qk - \Tk[0]\trans{\Tk[0]}\GAM\Qk/\tk[0]}
+= \trans{\Tk[0]}\GAM\Qk - \Parens{\tk[0]/\tk[0]}\trans{\Tk[0]}\GAM\Qk.
+\]
+%By definition, and \itemref{repk}:
+%$\wk = \ip{\Pk[k]}{\Wk[k+1]} =
+%\trans{\Parens{\trans{\Xk[0]}\GAM\Tk/\tk}}\trans{\Xk[0]}\GAM\Vk[k+1]$.
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:retk}]%
+For $k>0$, rewrite \Xk[k+1]:
+%Rewrite \Xk[k+1]:
+%and the fact that \Mtx{\Psym} is
+%tridiagonal:
+\begin{align*}%
+\Tk[k+1]&= \Xk[k+1] \Wk[k+1]\\
+&= \Parens{\Xk[0] - \Tk[0]\trans{\Pk[0]} - \ldots - \Tk[k-1]\trans{\Pk[k-1]} -
+\Tk[k]\trans{\Pk[k]}} \Wk[k+1],\\
+&= \Xk[0]\Wk[k+1] - \Tk[0]\trans{\Pk[0]}\Wk[k+1] - \Tk[k]\trans{\Pk[k]} \Wk[k+1],
+	\quad\text{(\lemref{vplsprops} \itemref{wklpk}),}\\
+&= \Qk[k+1] - \Tk[0]\trans{\Tk[0]}\Xk[0]\Wk[k+1]/\tk[0] - \Tk[k]\wk[k],
+\quad\text{(using \itemref{defwk}),}\\
+&= \Uk[k+1] - \Tk[k]\wk[k].
+\end{align*}
+For $k=0$, since $\wk[0] = 0,$ it suffices to show $\Tk[1] = \Uk[1].$
+Rewriting \Xk[1]:
+\begin{align*}%
+\Tk[1]&= \Xk[1] \Wk[1] = \Xk[0]\Wk[1] - \Tk[0]\trans{\Pk[0]}\Wk[1]\\
+&= \Qk[1] - \Tk[0]\trans{\Tk[0]}\Xk[0]\Wk[1]/\tk[0]
+= \Uk[1].
+\end{align*}
+%%%%%%%%%%%%%%
+%\item[\bf \ref{item:rerk}]%
+%From the previous proof, we use the fact that $\Tk[k] = -\Xk\Pk[k-1]\rk[k-1]$,
+%and use the definition of \rk:
+%\begin{align*}
+%\rk &= \trans{\yk[]}\Tk = -\trans{\yk[]}\Parens{\Xk[k-1] - \Tk[k-1]\trans{\Pk[k-1]}} \rk[k-1]\Pk[k-1]\\
+% &= -\trans{\yk[]}\Xk[k-1]\rk[k-1]\Pk[k-1]
+%+\trans{\yk[]} \Tk[k-1]\trans{\Pk[k-1]} \rk[k-1]\Pk[k-1]\\
+% &= -\Wk[k-1]\rk[k-1]\Pk[k-1]
+%+ \rk[k-1]^2 \trans{\Pk[k-1]} \Pk[k-1] \\
+% &= -\rk[k-1] + \rk[k-1]^2 \sk[k-1] = -\rk[k-1] \Mij{k-1}{k}.
+%\end{align*}
+%Again we have used the fact that $\trans{\Pk}\Wk = 1.$
+%%%%%%%%%%%%%%
+\item[\bf \ref{item:revk}]%
+First, for $k > 0,$ restate \itemref{pkspan} of \lemref{vplsprops}:
+$\Wk[k+1] = \Wk[k] - \Pk[k]\trans{\Tk[k]}\GAM\yk[]$.  Factoring to
+preimages using \itemref{repk} gives
+$\Vk[k+1] = \Vk[k] - \Tk[k]\trans{\Tk[k]}\GAM\yk[]/\tk[k]$.  
+The definition of \qk[k] then gives the result.
+
+For $k=0,$ rewrite \Xk[1]:
+\begin{align*}
+\Wk[1] &= \trans{\Parens{\Xk[0] - \Tk[0]\trans{\Pk[0]}}}\GAM\yk[]
+= \trans{\Xk[0]}\GAM\yk[] -
+\trans{\Xk[0]}\GAM\Tk[0]\Tk[0]\GAM\yk[]/\tk[0],\quad\text{thus}\\
+\Vk[1] &= \yk[] - \Tk[0]\qk[0].
+\end{align*}%
+%By definition of \Wk and \Xk:
+%\begin{align*}
+%\Wk &= \trans{\Xk}\yk[] = \trans{\Parens{\Xk[k-1] - \Tk[k-1]\trans{\Pk[k-1]}}}
+%\yk[]
+%= \trans{\Xk[k-1]}\yk[] - \Pk[k-1]\trans{\Tk[k-1]}\yk[]\\
+%&= \Wk[k-1] - \Pk[k-1]\rk[k-1].
+%\end{align*}
+%%%%%%%%%%%%%%
+%\item[\bf \ref{item:reuksk}]%
+%This follows from \itemref{repk} and the definitions of \uk, \sk, and \Zk.
+\end{compactenum}
+\end{proof}%UNFOLD
+%
+%
+For concreteness, I present the WPLS algorithm via intermediate calculations as
+\algvref{oddpls}.
+%\begin{algorithm}[htb!]%FOLDUP
+%\caption{Algorithm for computing the PLS regression vector, computing \Xk
+%implicitly.\label{alg:oddpls}}
+%\alginout{Centered matrix and vector, and number of
+%coefficients}{the regression vector}
+%\algname{implicitPLS}{$\Xk[1], \yk[], l$}
+%\begin{algtab}
+%	$\Mij{}{} \gets \eye[l],$ the $l\cross l$ identity matrix.\\
+%	$\Tk[0] \gets \vz, \uk[1] \gets 0$.\\
+%
+%	$\Wk[1] \gets \trans{{\Xk[1]}}\yk[].$\\
+%	$\Tk[1] \gets \Xk[1] \Wk[1].$\\
+%	$\tk[1] \gets \trans{\Tk[1]}\Tk[1].$\\
+%	$\Pk[1] \gets \trans{{\Xk[1]}} \Tk[1] / \tk[1].$\\
+%	$\sk[1] \gets \trans{{\Pk[1]}} \Pk[1].$\\
+%	$\rk[1] \gets \trans{{\yk[]}} \Tk[1].$\\
+%	$\qk[1] \gets \rk[1] / \tk[1].$\\
+%	\algif{$\rk[1] = 0$}
+%		Full rank achieved. Let $l = 1$.\\
+%	\algend
+%%	Let $\Xk[1] \gets \Xc,$ and $\yk[] \gets \yc$.\\
+%	\algforto{$k=2$}{$l$}
+%		$\Wk \gets \Wk[k-1] - \rk[k-1]\Pk[k-1].$\\
+%		$\Tk \gets - \Xk[1]\rk[k-1]\Pk[k-1] + \rk[k-1] \uk[k-1] \Tk[k-2] + \rk[k-1]
+%		\sk[k-1]\Tk[k-1].$\\
+%		$\tk \gets \trans{\Tk}\Tk.$\\
+%		$\Mij{k-1}{k} \gets 1 - \rk[k-1] \sk[k-1].$\\
+%		$\rk \gets -\rk[k-1] \Mij{k-1}{k}.$\\
+%%		\rk[k-1]^2\sk[k-1] -\rk[k-1].$\\
+%		$\Pk \gets \trans{{\Xk[1]}} \Tk / \tk.$\\
+%		$\uk \gets \trans{\Pk} \Pk[k-1].$\\
+%		$\sk \gets \trans{{\Pk}} \Pk.$\\
+%		$\qk \gets \rk / \tk.$\\
+%		\algif{$\rk = 0$}
+%			Full rank achieved. Let $l = k$.\\
+%		\algend
+%%		$\Xk[k] \gets \Xk[k-1] - \Tk[k-1] \trans{\Pk[k-1]}.$\\
+%%	\label{algstep:PLSupy}
+%%		$\yk[k+1] \gets \yk - \Tk q_k.$\\
+%	\algend
+%	Let \Mtx{\Wsym} be the matrix with columns $\Wk[{\onetox{l}}].$  Similarly
+%	define \vect{q}.\\
+%	$\regb \gets \Mtx{\Wsym} \invs{\Mij{}{}} \vect{q}.$
+%	\label{algstep:KVmakeTentPanel}\\
+%\algreturn \regb
+%\end{algtab}
+%\end{algorithm}%UNFOLD
+\begin{algorithm}[htb!]%FOLDUP
+\caption{Algorithm to compute the WPLS regression vector, with \Xk implicit.\label{alg:oddpls}}
+\alginout{Matrix and vector, factors, and diagonal response weight matrix.}{The
+regression vector and intercept.}
+\algname{implicitWPLS}{$\Xk[0], \yk[], \fc, \GAM=\diag{\vgam}$}
+\begin{algtab}
+	$\Mij{}{} \gets \eye[\fc],$ the $\fc\cross\fc$ identity matrix.\\
+	Precompute $\Xk[0]\trans{\Xk[0]}\GAM$.\\
+	$\Tk[0] \gets \wun{}, \Vk[0] \gets \yk[]$.\\
+	\algforto{$k=0$}{$\fc$}
+		$\rk \gets \trans{\yk[]}\GAM\Tk[k].$\\
+		\algif{$\rk = 0$}
+			Full rank achieved; Let $\fc = k$ and break the for loop.\\
+		\algend
+		$\tk \gets \trans{\Tk}\GAM\Tk.$\\
+		$\qk \gets \rk / \tk.$\\
+		\algif{$k < \fc$}
+			$\Vk[k+1] \gets \Vk[k] - \qk[k]\Tk[k].$\\
+			Let $\Qk[k+1] \gets \Parens{\Xk[0]\trans{\Xk[0]}\GAM} \Vk[k+1]$.\\
+			Let $\Uk[k+1] \gets \Qk[k+1] - \Tk[0]\trans{\Tk[0]}\GAM\Qk[k+1]/\tk[0]$.\\
+			$\wk[k] \gets \trans{\Tk[k]} \GAM \Uk[k+1] / \tk[k]$.\\
+			$\Tk[k+1] \gets \Uk[k+1] - \wk[k]\Tk[k]$.\\
+			\algif{$k > 0$}
+				$\Mij{k}{k+1} \gets \wk[k]$.\\
+			\algend
+		\algend
+%		\rk[k-1]^2\sk[k-1] -\rk[k-1].$\\
+%		$\Pk \gets \trans{{\Xk[1]}} \Tk / \tk.$\\
+%		$\uk \gets \trans{\Pk} \Pk[k-1].$\\
+%		$\uk \gets \trans{{\Tk}}\Xk[1]\trans{\Xk[1]} \Tk[k-1] /(\tk\tk[k-1]).$\\
+%		$\sk \gets \trans{{\Tk}}\Xk[1]\trans{\Xk[1]} \Tk /\tk^2.$\\
+%		$\sk \gets \trans{{\Tk}}\Zk/\tk.$\\
+%		$\Xk[k] \gets \Xk[k-1] - \Tk[k-1] \trans{\Pk[k-1]}.$\\
+%	\label{algstep:PLSupy}
+%		$\yk[k+1] \gets \yk - \Tk q_k.$\\
+	\algend
+	Let \Mtx{V} be the matrix with columns $\Vk[{\onetox{\fc}}].$  Similarly
+	define \vect{q}.\\
+	$\rega \gets \Mtx{V} \invs{\Mij{}{}} \vect{q},$
+	$\regb \gets \trans{\Xk[0]}\GAM\rega,$
+	$\rego \gets \qk[0] - \trans{\Tk[0]}\GAM\Xk[0] \regb / \tk[0].$\\
+\algreturn \tuple{\regb, \rego}.
+\end{algtab}
+\end{algorithm}%UNFOLD
+%UNFOLD
+
+\section{WPLS Computation with Jacobian}%FOLDUP
+
+Now I amend \algref{oddpls} with derivative computations to create an 
+algorithm that computes the
+regression coefficient for input $\Xk[1]\LAM,$ and \yk[1], and returns the
+preimage of the regression vector, $\rega,$ as well as its Jacobian \drega, and
+the gradient of the intercept, \glam{\rego}.
+This is given as \algvref{fullonpls}.  In addition to the intermediate quantities
+used in \algref{oddpls}, this algorithm also computes some intermediate
+derivatives, some of which need to be stored until the end of the computation.
+The required derivatives are \dlam{\Vk[k]}, \glam{\qk[k]} and \glam{\wk[k]} for
+$k\ge1$,  and \glam{\rk[k]}, \dlam{\Uk[k]}, \glam{\tk[k]}, and \dlam{\Tk[k]} for the
+most recent $k$.
+
+\begin{algorithm}[htbp!]%FOLDUP
+\caption{Algorithm to compute the WPLS regression vector and 
+Jacobian.\label{alg:fullonpls}}
+\alginout{Predictor and response, factors, response weights and predictor 
+weights.}{The preimage of the regression vector and its Jacobian, and the
+intercept and its gradient.}
+\algname{WPLSandJacobian}{$\Xk[1], \yk[], \fc, \vgam, \vlam$}
+\begin{algtab}
+	Precompute $\XLXG$.\\
+	$\Tk[0] \gets \wun{}, \dlam{\Tk[0]} \gets \Mz, \Vk[0] \gets \yk[],
+	\dlam{\Vk[0]} \gets \Mz$.\\
+	\algforto{$k=0$}{$\fc$}
+		$\rk \gets \trans{\yk[]}\GAM\Tk[k], \glam{\rk} \gets
+		\trans{\dlam{\Tk[k]}}\GAM\yk[].$\\
+		\algif{$\rk = 0$}
+			Full rank achieved; Let $\fc = k$ and break the for loop.\\
+		\algend
+		$\tk \gets \trans{\Tk}\GAM\Tk, \glam{\tk} \gets 2 \trans{\dlam{\Tk[k]}}
+		\GAM\Tk[k].$\\
+		$\qk \gets \rk / \tk, \glam{\qk} \gets \wrapparens{\tk\glam{\rk} -
+		\rk\glam{\tk}}/\tk^2.$\\
+		\algif{$k < \fc$}
+			$\Vk[k+1] \gets \Vk[k] - \qk[k]\Tk[k],$
+			\newline $\dlam{\Vk[k+1]} \gets \dlam{\Vk[k]} - \qk[k]\dlam{\Tk[k]} -
+			\Tk[k]\trans{\glam{\qk[k]}}.$\\
+			Let $\Qk[k+1] \gets \Parens{\XLXG} \Vk[k+1]$,\newline
+			$\dlam{\Qk[k+1]} \gets \XLXG \dlam{\Vk[k+1]} + 2 \Xk[0] \LAM
+			\diag{\trans{\Xk[0]}\GAM\Vk[k+1]}.$\\
+			Let $\Uk[k+1] \gets \Qk[k+1] - \Tk[0]\trans{\Tk[0]}\GAM\Qk[k+1]/\tk[0]$,\newline
+			$\dlam{\Uk[k+1]} \gets \dlam{\Qk[k+1]} -
+			\Tk[0]\trans{\Tk[0]}\GAM\dlam{\Qk[k+1]}/\tk[0]$.\\
+			$\wk[k] \gets \trans{\Tk[k]} \GAM \Uk[k+1] / \tk[k]$,
+			\newline $\glam{\wk[k]} \gets
+			\Parens{\trans{\dlam{\Tk[k]}}\GAM\Uk[k+1] +
+			\trans{\dlam{\Uk[k+1]}}\GAM\Tk[k] - \wk[k] \glam{\tk[k]}} / \tk$.\\
+			$\Tk[k+1] \gets \Uk[k+1] - \wk[k]\Tk[k]$,
+			\newline $\dlam{\Tk[k+1]} \gets \dlam{\Uk[k+1]} - \wk[k]\dlam{\Tk[k]} -
+			\Tk[k]\trans{\glam{\wk[k]}}.$\\
+		\algend
+%		\rk[k-1]^2\sk[k-1] -\rk[k-1].$\\
+%		$\Pk \gets \trans{{\Xk[1]}} \Tk / \tk.$\\
+%		$\uk \gets \trans{\Pk} \Pk[k-1].$\\
+%		$\uk \gets \trans{{\Tk}}\Xk[1]\trans{\Xk[1]} \Tk[k-1] /(\tk\tk[k-1]).$\\
+%		$\sk \gets \trans{{\Tk}}\Xk[1]\trans{\Xk[1]} \Tk /\tk^2.$\\
+%		$\sk \gets \trans{{\Tk}}\Zk/\tk.$\\
+%		$\Xk[k] \gets \Xk[k-1] - \Tk[k-1] \trans{\Pk[k-1]}.$\\
+%	\label{algstep:PLSupy}
+%		$\yk[k+1] \gets \yk - \Tk q_k.$\\
+	\algend
+	Let $\vk[l] \gets \qk[l]$, $\glam{\vk[l]} \gets \glam{\qk[l]}$.\\
+	\algforto{$\jx=l-1$}{$1$}
+		$\vk[\jx] \gets \qk[\jx] - \wk[\jx] \vk[\jx+1]$,\newline
+		$\glam{\vk[\jx]} \gets \glam{\qk[\jx]} - \wk[\jx] \glam{\vk[\jx+1]} - \vk[\jx+1]
+		\glam{\wk[\jx]}$.\\
+	\algend
+	$\rega \gets \Mtx{\Vsym} \vect{\vk[]},$
+	$\drega \gets \Mtx{\Vsym} \dlam{\vect{\vk[]}}.$\\
+	\algforto{$\jx=1$}{$l$}
+		\label{algstep:FOfaketensor}
+		$\drega \gets \drega + \vk[\jx] \dlam{\Vk[\jx]}.$\\
+	\algend
+%	$\regb \gets \trans{\Xk[0]}\GAM\rega,$
+	$\rego \gets \trans{\Tk[0]}\GAM\Parens{\yk[] - \XLXG \rega} / \tk[0]$,
+	\newline $\dlam{\rego} \gets -\trans{\Parens{ \XLXG \drega + 2
+	\Xk[0]\LAM\diag{\trans{\Xk[0]}\GAM\rega} }} \GAM\Tk[0]/\tk[0].$\\
+
+\algreturn \tuple{\rega,\drega,\rego,\glam{\rego}}.
+\end{algtab}
+\end{algorithm}%UNFOLD
+%\begin{algorithm}[htbp!]%FOLDUP
+%\caption{Algorithm for computing the PLS regression vector and Jacobian.\label{alg:fullonpls}}
+%\alginout{Predictor and response, predictor weights, number of
+%coefficients}{the preimage of the regression vector and its Jacobian}
+%\algname{PLSandJacobian}{$\Xk[1], \yk[], \vlam, l$}
+%\begin{algtab}
+%%	$\Mij{}{} \gets \eye[l],$ the $l\cross l$ identity matrix.\\
+%	$\Tk[0] \gets \vz, \uk[1] \gets 0, \glam{\uk[1]} \gets 0$,
+%	$\dlam{\Tk[0]} \gets \Mtx{0}.$
+%	$\Vk[1] \gets \yk[]$, $\dlam{\Vk[1]} \gets \Mz.$
+%	Precompute $\XLX$.
+%	\\
+%
+%	$\Tk[1] \gets \Parens{\XLX} \Vk[1]$,
+%	$\dlam{\Tk[1]} \gets 2\Xk[1]\LAM\diag{\trans{\Xk[1]}\Vk[1]}.$
+%	$\tk[1] \gets \trans{\Tk[1]}\Tk[1]$, 
+%	$\glam{\tk[1]} \gets 2\trans{\dlam{\Tk[1]}}\Tk[1]$.
+%	$\Zk[1] \gets \Parens{\XLX}\Tk[1] / \tk[1]$,\newline
+%	$\dlam{\Zk[1]} \gets \tk[1]^{-1}\Parens{\XLX\dlam{\Tk[1]} +
+%	2\Xk[1]\LAM\diag{\trans{\Xk[1]}\Tk[1]} - \Zk[1]\trans{\glam{\tk[1]}}}$.\\
+%
+%	$\sk[1] \gets \trans{{\Tk[1]}} \Zk[1]/\tk[1]$, \newline
+%	$\glam{\sk[1]} \gets \tk[1]^{-1}\Parens{\trans{\dlam{\Zk[1]}}\Tk[1] +
+%	\trans{\dlam{\Tk[1]}}\Zk[1] - \sk[1]\glam{\tk[1]}}$, %\\
+%	$\rk[1] \gets \trans{{\yk[]}} \Tk[1]$,\newline
+%	$\glam{\rk[1]} \gets \trans{\dlam{\Tk[1]}}\yk[]$, %\\
+%	$\qk[1] \gets \rk[1] / \tk[1]$,
+%	$\glam{\qk[1]} \gets \Parens{\tk[1]\glam{\rk[1]} - \rk[1]\glam{\tk[1]}} /
+%	\tk[1]^2$.\\
+%%	Let $\Xk[1] \gets \Xc,$ and $\yk[] \gets \yc$.\\
+%	\algforto{$k=2$}{$l$}
+%
+%		$\Vk \gets \Vk[k-1] - \qk[k-1]\Tk[k-1]$,\newline
+%		$\dlam{\Vk} \gets \dlam{\Vk[k-1]} - \qk[k-1]\dlam{\Tk[k-1]} -
+%		\Tk[k-1]\trans{\glam{\qk[k-1]}}$.\\
+%
+%
+%		$\Tk \gets - \rk[k-1]\Zk[k-1] + \rk[k-1] \uk[k-1] \Tk[k-2] + \rk[k-1]
+%		\sk[k-1]\Tk[k-1]$,\newline
+%%		\hspace{10mm}\begin{equation*}\begin{split}
+%%		\begin{minipage}[t]{0.7\columnwidth}
+%%		\begin{multline*}
+%		\(
+%		\dlam\Tk 
+%		 \gets - \rk[k-1]\dlam{\Zk[k-1]} + \Zk[k-1]\trans{\glam{\rk[k-1]}} 
+%		 + \rk[k-1] \uk[k-1] \dlam{\Tk[k-2]}
+%		+ \Tk[k-2] \trans{\Bracks{\rk[k-1] \glam{\uk[k-1]} + \uk[k-1] \glam{\rk[k-1]}}}
+%		 + \rk[k-1] \sk[k-1]\dlam{\Tk[k-1]} 
+%		+ \Tk[k-1] \trans{\Bracks{\rk[k-1] \glam{\sk[k-1]} +
+%		\sk[k-1]\glam{\rk[k-1]}}}.
+%		\)
+%%		\newline
+%%		\hspace{5mm}\hfill(See \noteref{rankcalc}.)
+%		\label{algstep:calcdt}
+%%		\end{multline*}
+%%		\end{minipage}
+%%		\end{split}\end{equation*}
+%		\\
+%
+%		$\Mij{k-1}{k}\gets1-\rk[k-1] \sk[k-1]$,\newline
+%		$\glam{\Mij{k-1}{k}} \gets - \Parens{\sk[k-1] {\glam{\rk[k-1]}} 
+%		+ \rk[k-1]{\glam{\sk[k-1]}}}.$\\
+%		$\rk \gets -\rk[k-1] \Mij{k-1}{k}$,
+%		$\glam{\rk} \gets -\rk[k-1] \glam{\Mij{k-1}{k}} - \Mij{k-1}{k}
+%		\glam{\rk[k-1]}$.\\
+%
+%		$\tk \gets \trans{\Tk}\Tk$, 
+%		$\glam{\tk} \gets 2\trans{\dlam{\Tk}}\Tk$.\\
+%		$\Zk \gets \Parens{\XLX}\Tk / \tk$,\newline
+%		$\dlam{\Zk} \gets \tk^{-1}\Parens{\XLX\dlam{\Tk} +
+%		2\Xk[1]\LAM\diag{\trans{\Xk[1]}\Tk} - \Zk\trans{\glam{\tk}}}$.\\
+%
+%
+%		$\sk \gets \trans{{\Tk}} \Zk/\tk$, 
+%		$\uk \gets \trans{{\Tk[k-1]}}\Zk/\tk[k-1]$,\newline
+%		$\glam{\sk} \gets \tk^{-1}\Parens{\trans{\dlam{\Zk}}\Tk +
+%		\trans{\dlam{\Tk}}\Zk - \sk\glam{\tk}}$,\newline %\\
+%		$\glam{\uk} \gets \tk[k-1]^{-1}\Parens{\trans{\dlam{\Zk}}\Tk[k-1] +
+%		\trans{\dlam{\Tk[k-1]}}\Zk - \uk\glam{\tk[k-1]}}$.\\
+%		$\qk \gets \rk / \tk$,
+%		$\glam{\qk} \gets \Parens{\tk\glam{\rk} - \rk\glam{\tk}} / \tk^2$.\\
+%	\algend
+%
+%	$\vk[l] \gets \qk[l]$, $\glam{\vk[l]} \gets \glam{\qk[l]}$.\\
+%	\algforto{$j=l-1$}{$1$}
+%		$\vk[j] \gets \qk[j] - \Mij{j}{j+1} \vk[j+1]$,\newline
+%		$\glam{\vk[j]} \gets \glam{\qk[j]} - \Mij{j}{j+1} \glam{\vk[j+1]} - \vk[j+1]
+%		\glam{\Mij{j}{j+1}}$.\\
+%	\algend
+%	$\rega \gets \Mtx{\Vsym} \vect{\vk[]},$
+%	$\drega \gets \Mtx{\Vsym} \dlam{\vect{\vk[]}}.$\\
+%	\algforto{$j=1$}{$l$}
+%		\label{algstep:FOfaketensor}
+%		$\drega \gets \drega + \vk[j] \dlam{\Wk[j]}.$\\
+%	\algend
+%%	$\regb \gets \LAM\trans{\Xk[1]}\rega$,
+%%	$\dregb \gets \diag{\trans{\Xk[1]}\rega} + \LAM\trans{\Xk[1]}\drega$.\\
+%%\algreturn \tuple{\regb,\dregb}
+%\algreturn \tuple{\rega,\drega}
+%\end{algtab}
+%\end{algorithm}%UNFOLD
+
+Careful inspection and the vector calculus rules outlined in \secref{bguide}
+are all that is required to verify that \algref{fullonpls} correctly computes
+the Jacobian of the model \regb.  The only theoretical complication in the
+transformation of \algref{oddpls} to \algref{fullonpls} is the explicit formulation
+of the back substitution to compute $\vect{\vk[]} = \invs{\Mij{}{}} \vect{q}.$
+Given that \Mij{}{} is upper triangular, bidiagonal with unit diagonal,
+inspection reveals that the back substitution in \algref{fullonpls} is computed
+correctly.
+
+Inspection of \algref{vanillapls} reveals that WPLS computation requires
+\bigtheta{\ro\cl\fc} floating point operations, where \Xk[1] is $\ro
+\cross\cl$, and $\fc$ is the ultimate number of factors used. Thus a numerical
+approximation to the Jacobian using $\cl$ evaluations of \algref{vanillapls}
+gives an algorithm with asymptotic runtime of \bigtheta{\ro\cl^2\fc}.
+Inspection of \algref{fullonpls} reveals that it computes the Jacobian exactly
+in \bigtheta{\ro^2\cl\fc}.   The runtime limiting operation is the 
+multiplication $\Parens{\XLXG}\dlam{\Vk[k+1]}$ in the calculation of
+\dlam{\Uk[k+1]}, with runtime of \bigtheta{\ro^2\cl} per loop.
+
+It would appear that one would incur a further cost of \bigtheta{\ro\cl^2} in
+the conversion of \drega to \dregb, as it requires the multiplication
+$\LAM\trans{\Xk[1]}\GAM\drega$.  However, this can be avoided if the ultimate goal
+is computation of the Jacobian of the residual, rather than the Jacobian of the
+regression coefficients.  Referring back to \eqnref{dresd}% (or equivalently \eqnref{dresdII})
+, we have
+\begin{align*}
+\dlam{\resd} + \wunt\trans{\glam{\rego}}
+&= - \Xtst\Parens{\diag{\regbp{\vlam}} +
+\LAM\dlam{\regbp{\vlam}}},\\
+&= - \Xtst\Parens{\diag{\LAM\trans{\Xcal}\GAM\regap{\vlam}} +
+	\LAM\dlam{\LAM\trans{\Xcal}\GAM\regap{\vlam}}},\\
+&= - \Xtst\Parens{\diag{\LAM\trans{\Xcal}\GAM\regap{\vlam}} +
+	\LAM\diag{\trans{\Xcal}\GAM\regap{\vlam}} +
+	\LAMk2\trans{\Xcal}\GAM\dlam{\regap{\vlam}}},\\
+&= - 2\Xtst\diag{\LAM\trans{\Xcal}\GAM\regap{\vlam}} -
+	\Parens{\Xtst\LAMk2\trans{\Xcal}}\GAM\dlam{\regap{\vlam}}.
+\end{align*}
+Letting \rotst be the number of objects in the test group, the
+multiplication 
+%Assuming that the number of objects in the test group is less than the number
+%in the calibration group (\ie less than \ro), the multiplication
+$\Xtst\LAMk2\trans{\Xcal}$ requires \bigo{\ro\rotst\cl} flops, and the
+multiplication $\Parens{\Xtst\LAMk2\trans{\Xcal}}\GAM\dlam{\regap{\vlam}}$ also 
+requires \bigo{\ro\rotst\cl} flops.  Thus the computation of \dlam{\resd} can be
+done with \bigo{\ro\rotst\cl + \ro^2\cl\fc} flops, which is linear in $\cl$.
+
+For concreteness, the residual computation with analytic Jacobian was coded and
+compared for accuracy and speed against a ``slow'' analytic version (one which 
+does not exploit the reduced rank in the Jacobian computation) and a
+numerical approximation to the Jacobian.  Run times are compared in
+\figref{comprtimes} for varying number of channels; the difference in
+asymptotic behavior with respect to $\cl$ is evident.
+For the case of $40$ calibration objects and $10$ test objects generated
+randomly with $2000$ channels, the fast analytic computation of residual
+Jacobian took about $1.7$ seconds, the slow analytic took about $44$ seconds, and the
+numeric approximation took about $84$ seconds on the platform tested (see
+\secref{impnotes} for details).
+Note that the ``slow'' analytic version is actually preferred in the case that
+$\ro \ge \cl,$ as it runs in time \bigtheta{\ro\cl^2\fc}.  However, in
+spectroscopy it is usually the case that $\ro\ll\cl$.
+
+%\usepackage{textcomp} 
+%followed by \textcopyright might provide
+%\texttrademark
+%  \textsuperscript{TM}
+%  \textsuperscript{\textsc{tm}}
+
+\begin{figure}[htb!]%monofigure%FOLDUP
+\centering
+%	\psfrag{fa}[rb][rb]{fast a}
+	\psfrag{na}[rb][rb]{fast a}
+	\psfrag{sa}[rb][rb]{slow a}
+	\psfrag{nu}[rb][rb]{numeric}
+	\psfrag{n}[][][2]{$\cl$}
+	\psfrag{t}[][][2][0]{time (secs)}
+	\includegraphics[angle=270,width=.85\columnwidth]{comprtimes.eps}
+\caption{Run times of the fast analytical computation of the
+Jacobian of the residual are compared against a slow analytic and a numerical
+approximation.  The number of channels, $\cl$ is shown in the horizontal axis,
+while the vertical axis is CPU time in seconds.  The number of objects in the
+calibration and test groups remained constant, at $40$ and $10$ throughout, as
+did the number of PLS factors, $5$.  Times are the mean of seven runs, and
+single standard deviation bars are plotted, although they are mostly too small
+to see.  See \secref{impnotes} for details on the tested platform.}\label{fig:comprtimes} 
+\end{figure}%UNFOLD
+%UNFOLD
+
+\section{The BFGS Algorithm}%FOLDUP
+
+The BFGS algorithm\tsidenote{Named for its discoverers, Broyden, Fletcher,
+Goldfarb and Shanno.} is a quasi-Newton optimization algorithm.  That is, the algorithm
+models a scalar function of many variables by a quadratic function with an
+approximate Hessian.  The approximation to the Hessian is improved at each step
+by two rank one updates.  The BFGS algorithm enjoys a number of properties which
+make it attractive to the numerical analyst:  provable superlinear global
+convergence for some convex optimization problems;  provable superlinear local 
+convergence for some nonconvex problems;  robustness and good performance in
+practice; deterministic formulation; relative simplicity of implementation;
+and, perhaps most importantly to the practical analyst, the algorithm has been
+implemented in a number of widely available libraries and packages, many of
+which accept the objective function as a blackbox.
+\cite{NjWsj1999,nocedal91theory}
+
+The BFGS algorithm is an iterative solver.  That is, it starts with some
+initial estimate of a good \vlam, say \vlamk[0], and produces successive
+estimates, \vlamk, which are supposed to converge to a local minimizer of the
+objective function.  Each iteration consists of a computation of the gradient
+of the objective at \vlamk.  The algorithm constructs a search direction,
+call it \vrok, by multiplying the inverse approximate Hessian by the negative gradient.
+Then a line search is performed to find an acceptable step in the search
+direction, that is to find the \salk used to construct
+$\vlamk[k+1] = \vlamk[k] + \salk[k] \vrok[k].$
+In the backtracking algorithm used to perform line search described by Nocedal
+and Wright, a number of prospective values of \salk may be tested; the
+objective function must be computed for each prospective value, but the
+gradient need not be computed. \cite[Algorithm 3.1]{NjWsj1999}  A fast
+implementation of the BFGS algorithm should not query the blackbox function for
+gradients during the backtracking phase.
+\nocite{MjjTdj1992}
+
+As mentioned above, the BFGS requires some initial estimate of the Hessian of
+the objective function.  When a good initial estimate of the Hessian is
+impractical, the practical analyst punts, and resorts to the identity matrix.
+Under this choice, the first search direction is the negative gradient, \ie the
+direction of steepest descent.  The BFGS constructs better estimates of the
+Hessian by local measurement of the curvature of the objective function.
+
+Depending on the implementation, the BFGS algorithm may have to store the
+approximate Hessian of the objective function or the inverse approximate
+Hessian.  In either case, the storage requirement is \omeg{\cl^2}.   To avoid
+this, one can use the limited memory BFGS algorithm, which approximates the
+Hessian by a fixed number of the previous iterative updates, which avoids the
+need for quadratic storage.  This method evidently works as well as BFGS in
+practice for many problems.  \cite{liu89limited,gill97limitedmemory,nocedal91theory}
+
+%UNFOLD
+
+\section{Selecting Wavelengths from an Optimal \vlam}%FOLDUP
+\label{sec:unembed}
+
+Once a predictor weighting \vlam has been found which gives a small \RMSECV{},
+one must use the \vlam to select a subset of the channels.  That is, one must
+reverse the embedding, finding a subset of the channels in the discrete space
+of all such subsets which somehow approximates the continuous solution given by
+\vlam.  Without loss of generality, one may assume that \vlam has unit norm, \ie
+$\norm{\vlam} = 1$, since the effective WPLS
+regression vector is invariant under scaling, \ie 
+$\sclr\LAM\regbp{\sclr \vlam}$ is constant for all nonzero values of
+$\sclr.$  This latter fact is proved by considering the output of the
+canonical WPLS algorithm, which normalizes the vectors \Wk and \Tk.
+Moreover, I assume that the elements of \vlam are nonnegative, again without
+loss of generality.
+
+Clearly, the weightings of the channels somehow signify their importance, and
+can be used in the selection of a subset of the channels. 
+The ordering in significance indicated by \vlam suggests $\cl$ different possible
+choices of subsets\tsidenote{To be fair, the trivial model, which estimates the
+\yk[] values as constant, should also be considered.}, the \kth{\ms} of which is
+the subset with the $\ms$ most significant channels.  If the acceptable number of
+channels is bounded by an external restriction, say an upper bound of $\cl_f,$ then 
+one should select the subset of the $\cl_f$ most significant channels.
+%If, one the other hand, there is no such restriction, one could pick an
+%arbitrary weight and select the subset of the predictors whose significance is greater
+%than that cutoff.  I explore the less \adhoc{} method of employing an
+%information criterion to select the optimal subset of predictors.
+%Each subset corresponds to
+%a ``model,'' and the models can be compared by the computation and comparison
+%of an information criterion. 
+Without any external restrictions, one should select the subset of channels (or
+``model'') which minimizes some measure of predictive quality, such as \RMSECV
+or an information criterion like Schwarz' Bayesian Information Criterion
+(\BIC).
+%
+%The model (\ie subset of channels) with the least
+%value of the information criterion is then selected.  
+%To keep the number of
+%estimated parameters smaller than the number of observations, one
+%should restrict one's examination to models with fewer than $\ro$ channels.
+
+The asymptotic (in $\ro$) consistency of model selection criteria was examined by
+Shao. \cite{Shao:1993:LMS,Shao:1997:ATLMS}  A number of differences exist
+between the formulation studied by Shao and that presented here: our design
+matrix is assumed to be of reduced rank (\ie \eqnref{Xdeco} describes a reduced
+rank matrix) and non-deterministic\tsidenote{Shao dismisses this complication by
+stating his results will hold almost surely under certain conditions.}; our
+affine model is built by PLS rather than OLS. However, absent any extant
+results for the reduced rank formulation, I follow Shao's work, which you may
+take with a grain of salt.
+
+I will focus on two model comparison criteria suggested by Shao: delete-$d$ CV,
+and \BIC.  Delete-$d$ CV is regular cross validation with $d$ objects in the
+validation set.  The model which minimizes \RMSECV{} under the given grouping
+is selected.  Because \nchoosek{\ro}{d} can be very large, only a number of
+the possible CV groupings are used.  Shao's study suggests that Monte Carlo
+selection of the CV groups can be effective with only \bigo{\ro} of the
+possible groupings used.  Shao also proved that $d/\ro \to 1$ is a
+prerequisite for asymptotic consistency.  In his simulation study, he used $d
+\approx \ro - \ro^{3/4}$, and found that it outperformed delete-$1$ CV,
+especially in those tests where selecting overly large models is possible.
+\cite{Shao:1993:LMS}
+
+%Shao's grouping scheme affects the runtime of the \SRCEK{} algorithm.  If
+%$\ro^p$ objects are used in the calibration group, with the remainder in the
+%test group, then the computation of \dlam{\resd} for a single CV grouping can
+%be done in runtime \bigo{\ro^{2p}\cl(\fc-1) + \ro^{p+1}\cl}.
+
+%Shao also examines a class of model selection criteria which contains the
+%General Information Criterion (\GIC) described by Rao and Wu.
+%\cite{Shao:1997:ATLMS,RrWy1989}  For a subset of $\ms$ channels, this 
+%criterion takes the form
+%\[\GIC{} = \MSEP + \frac{\hat{\sigma}^2\log\ro}{\ro}\ms,\]
+%where \MSEP is computed using the given subset of channels, and
+%$\hat{\sigma}^2$ is an estimate of \sigmy, the variance of \ye (see
+%\eqnref{ydeco}), constructed from all the channels.  Because of the reduced rank of
+%\Xk[] and the large number of channels, one cannot use the
+%canonical estimator\tsidenote{It would be negative!}, rather one is tempted to
+%estimate \sigmy by $\ro\MSEP / (\ro - \fc - 1)$, where \MSEP in this case is based on
+%all the channels using $\fc$ factor PLS.  Since the \MSEP from the full
+%set of channels may be biased, one may alternatively use the estimate
+%$\ro\MSEP / (\ro - \fc - 1)$, where \MSEP is based on the given subset of
+%channels.  Minimizing the resultant criterion is equivalent to minimizing
+%a reduced rank Schwarz' Bayesian Information Criterion (\BIC{}):
+%%\[\exp{\BIC{}} = \MSEP + \frac{\MSEP \log\ro}{\ro - \fc - 1}\ms = 
+%%\MSEP\Bracks{1 + \frac{\log\ro}{\ro - \fc - 1}\ms}\]
+%\[\BIC{} = \ln\MSEP + \frac{\log\ro}{\ro - \fc - 1}\ms.\]
+
+Shao also examines a class of model selection criteria which contains the
+General Information Criterion described by Rao and Wu, the minimization
+of which, under certain assumptions, is equivalent to minimizing \BIC.
+\cite{Shao:1997:ATLMS,RrWy1989}  For a subset of $\ms$ channels, the reduced
+rank form of this criterion is
+\[\BIC{} = \ln\MSEP + \frac{\log\ro}{\ro - \fc - 1}\ms,\]
+where \MSEP is based on the given set of $\ms$ channels and $\fc$ factor PLS.
+I use the denominator term $\ro-\fc-1$, rather than $\ro - \ms$ as
+suggested by Shao for the OLS formulation, based on a simulation study.  This
+allows meaningful comparison in situations where $\ms > \ro,$ although in this
+case the expected value of \MSEP is penalized by a term quadratic in 
+$\ms / \ro$.  \cite{NbCrr2005}
+To continue the mongrelization of this criterion, I find it useful to replace
+\MSEP by \MSECV for appropriately chosen CV groups:
+\[\aBIC{} = \ln\MSECV + \frac{\log\ro}{\ro-\fc-1}\ms.\]
+Minimization of this criterion favors parsimony more than minimization of
+\RMSECV alone.  Until the asymptotic consistency of the reduced rank/PLS
+model selection problem is addressed theoretically, I cannot recommend one of
+these criteria over the other.
+
+%\[\BIC{} = \ro \ln\Parens{\hat{\sigma}^2} + (k+2) \ln\Parens{\ro}.\]
+
+%Broadly speaking, an information criterion provides an estimate of how well a
+%model matches a natural phenomenon, with that estimate formed by sampling the
+%underlying phenomenon.  Usually the criterion includes terms for both model
+%quality and model parsimony, thus punishing both under- and over-fitting.  \cite{Ah:1974,CjeNaa1999,Bk2004}
+
+%%oldway%FOLDUP
+%The most well known of the criteria is Akaike's Information Criterion (\AIC), which
+%uses the samples from the phenomenon to estimate the Kullback-Leibler distance
+%from the model to the underlying distribution.  If
+%$\mathcal{L}\Parens{\left.Y\right|\hat{\theta}_k}$ is
+%the ``likelihood'' of the data $Y$, consisting of $\ro$ observations, under the given
+%model with $k$ parameters, $\hat{\theta}_k$, estimated from the observed data,
+%then the second order corrected \AIC{} (denoted \AICc) is 
+%\[\AICc{} = -2 \ln\Parens{\mathcal{L}\Parens{\left.Y\right|\hat{\theta}_k}} +
+%2k + 2\frac{k(k+1)}{\ro-k-1}.\]
+%The last two terms form a second order bias correction of the estimate made by the
+%first term.  \cite{Bk2004}
+%
+%Supposing that a model for a given response is linear in some observed
+%predictors plus a Gaussian noise, \ie
+%\[\yk[] \sim \Xk[]_k \regb + \rego + \mathcal{N}\Parens{0,\sigma^2},\]
+%where $\Xk[]_k$ consists of $k$ predictors of the observed predictors, 
+%\regb and \rego are estimated from the data ($k+1$ parameters estimated), and 
+%$\sigma^2$ is estimated by the sample variance, $\hat{\sigma}^2$,
+%(another parameter estimated), then the \AICc{} is given by
+%\[\AICc{} = \ro \ln\Parens{\hat{\sigma}^2} + 2(k + 2) + 2\frac{(k+2)(k+3)}{\ro-k-3}
+% = \ro \ln\Parens{\hat{\sigma}^2} + 2\frac{\ro(k+2)}{\ro-k-3},\]
+%where $\ro$ is again the number of observations.
+%Note that the magnitude of the \AICc{} by itself is meaningless; rather, the
+%\AICc{} allows comparisons of different models. This is the case because a
+%change of units of the response causes a constant offset of the \AICc{} value
+%of each model.
+%
+%The Bayesian Information Criterion, \BIC{}, is another popular criterion for
+%the comparison of models.  Under the assumptions given above of a model of
+%linear response in some of the observed predictors plus a Gaussian noise, the
+%\BIC{} takes form
+%\[\BIC{} = \ro \ln\Parens{\hat{\sigma}^2} + (k+2) \ln\Parens{\ro}.\]
+%%UNFOLD
+%%newway%FOLDUP
+%The most well known of the criteria is Akaike's Information Criterion (\AIC{}), which
+%uses the samples from the phenomenon to estimate the Kullback-Leibler distance
+%from the model to the underlying distribution.  
+%The Bayesian Information Criterion, \BIC{}, is another popular criterion for
+%the comparison of models.  
+%
+%Supposing that a model for a given response is linear in some observed
+%predictors plus a Gaussian noise, \ie
+%\[\ysym \sim \trans{\vect{\Xsym}_k}\regb + \rego + \mathcal{N}\Parens{0,\sigma^2},\]
+%where $\vect{\Xsym}_k$ consists of $k$ predictors of the observed predictors, 
+%\regb and \rego are estimated from the data ($k+1$ parameters estimated), and 
+%$\sigma^2$ is estimated by the sample variance, $\hat{\sigma}^2$,
+%(another parameter estimated), then the 
+%\BIC{} takes the form
+%\[\BIC{} = \ro \ln\Parens{\hat{\sigma}^2} + (k+2) \ln\Parens{\ro}.\]
+%Note that the magnitude of the \BIC{} by itself is meaningless; rather, the
+%\BIC{} allows comparisons of different models. This is the case because a
+%change of units of the response causes a constant offset of the \BIC{} value
+%of each model.
+%
+%%UNFOLD
+
+It is not obvious that the magnitudes of the elements of \vlam are sufficient
+to establish an importance ordering on the channels.  For instance, it might be
+appropriate to multiply the elements of \vlam by the corresponding element of
+the regression vector \regb chosen by WPLS on the entire data set, and use that
+Kronecker product vector as the importance ordering.  It might be argued that
+that product should further be multiplied by the sample standard deviation of
+the channels.  As there seems to be no
+general trend in comparing the two methods, I recommend implementing each of
+these techniques and allowing the information criterion to select whichever model is
+best, irrespective of which pragma produced the ordering.
+
+%UNFOLD
+
+\section{Crafting an Objective Function}\label{sec:objfun}%FOLDUP
+
+The ultimate goal is selection of a subset of the channels which minimizes 
+delete-$d$ \RMSECV{} or one of the information criteria.  This should guide the
+choice of the objective function which we numerically minimize in the continuous 
+framework.  The obvious choice is to minimize \RMSECV{}, however the choice of
+the CV groups can lead to an asymptotically inconsistent selection
+procedure or long runtime.  
+%The minimization of \RMSECV{} alone may lead to an overfitting, even when the
+%number of latent factors is small.  
+Moreover, the minimization %procedure 
+of \RMSECV{} may also select a \vlam with a large number of nontrivial elements, which makes reversing the embedding difficult or noninformative.  
+
+Thus one may choose to minimize an
+objective function which approximates one of the information criteria,
+balancing quality and parsimony, rather than minimizing
+\RMSECV{}. 
+%Since the ultimate goal is to reduce the information criterion, one
+%might attempt to embed the information criterion into the continuous
+%space, and minimize the embedded function.
+Recall, for example, %the \BIC:
+\(\aBIC{} = \ln\MSECV + \wrapparens{\ms\,{\log\ro}}/\wrapparens{\ro - \fc - 1}\).
+The continuous embedding of the \MSECV term with respect to \vlam is understood.
+To complete the embedding it only remains to estimate the subset size (number
+of channels retained) of the model indicated by a continuous predictor
+weighting \vlam.
+%
+%Because \RMSECV{} is an estimate of the root
+%variance of the Gaussian noise, we can write
+%\[\BIC{} = \ro \ln\Parens{\hat{\sigma}^2} + (k+2) \ln\Parens{\ro}
+% \approx 2\ro \ln\Parens{\RMSECV{}} + (k+2) \ln\Parens{\ro}.\]
+%
+%To minimize the \BIC{}, it is sufficient to minimize the quantity
+%\[\Parens{\exp{\BIC{}}}^{1/2\ro} 
+%= \Bracks{\Parens{\hat{\sigma}^2}^\ro \ro^{k+2}}^{1/2\ro} 
+%= \hat{\sigma} \Parens{\ro^{1/2\ro}}^{2 + k}
+%\approx \RMSECV \Parens{\ro^{1/2\ro}}^{2 + k},
+%\]
+%with the approximation following because \RMSECV{} is an estimate of the root
+%variance of the Gaussian noise.  Because $\ro$ is fixed, it suffices to
+%minimize \(\RMSECV \Parens{\ro^{1/2\ro}}^{k}\).
+%
+%The remaining problem is how to estimate the size (number of parameters
+%estimated) of the model which is indicated by a continuous predictor weighting,
+%\vlam.  
+%
+My suggestion is to use a ratio of the $p$-norm to the $q$-norm:
+\[\mrpq[p,q]{\vlam} =
+\Parens{\frac{\norm[p]{\vlam}}{\norm[q]{\vlam}}}^{pq/(q-p)},\qquad\text{where }\,
+\norm[p]{\vlam} = \Parens{\sum_j \abs{\lame{j}}^p}^{1/p},\,
+%= \Parens{\frac{\Parens{\sum \abs{\lame{j}}^p }^{1/p}}{\Parens{\sum
+%\abs{\lame{j}}^2}^{1/2}}}^{2p/(2-p)}.
+\] 
+for $0 < p < q < \infty.$ I claim \mrpq{\vlam} is an appropriate choice of 
+model size estimate.  Note that \mrpq{} is scale invariant, that is,
+\mrpq{\sclr \vlam} is constant for each nonzero choice of the scalar $\sclr.$
+Also note that if $\vlam$ consists of $j$ ones and $n-j$ zeros, then
+$\mrpq{\vlam} = j$.  See \figref{clover} for the behaviour of this function for
+various values of $p, q.$  Using smaller values of $p$ creates a stronger
+drive towards binary vectors by penalizing non binary vectors.
+
+%The value $p=1$ gives the highest value of \mrp{} for non
+%``binary'' vectors.
+
+\begin{figure}[htb!]%monofigure%FOLDUP
+\centering
+	\psfrag{255}[][][0.85]{$\mrp[0.25,0.75]{}$}
+	\psfrag{11}[lt][rt][0.85]{$\mrp[1,1.01]{}$}
+	\psfrag{125}[][][0.85]{$\mrp[1,2.5]{}$}
+	\psfrag{52}[][][0.85]{$\mrp[2,5]{}$}
+	\psfrag{29}[rb][rb][0.85]{$\mrp[19,20]{}$}
+%	\psfrag{11}[][][0.5]{$\mrp[1,1.01]{}$}
+%	\psfrag{21}[][][0.5]{$\mrp[1,2]{}$}
+%	\psfrag{52}[][][0.5]{$\mrp[2,5]{}$}
+%	\psfrag{29}[][][0.5]{$\mrp[19,20]{}$}
+%	\psfrag{nu}[rb][rb]{numeric}
+%	\psfrag{n}[][][2]{$\cl$}
+%	\psfrag{t}[][][2][0]{time (secs)}
+	\includegraphics[angle=0,height=.62\columnwidth,width=.65\columnwidth]{clover.eps}
+\caption{The function \mrpq{\vlam} is plotted in polar coordinates for the two
+dimensional vector $\vlam = \Angles{\cos{\theta},\sin{\theta}},$ and various
+values of $p, q$ in the quadrant $0 \le \theta \le \pi/2$.  Note that each of 
+the graphs passes through \tuple{0,1}, \tuple{\pi/4,2} and \tuple{\pi/2,1}, as
+guaranteed by the fact that \mrpq{} measures the number of nonzero elements in
+a scaled binary vector.  The circles of radius $1$ and $2$ are also plotted.}\label{fig:clover} 
+\end{figure}%UNFOLD
+
+%mu(t,p) = (abs(sin(t)) ** (p) + abs(cos(t)) ** (p)) ** (2.0 / (2.0 - p));
+%gnuplot> set polar
+%gnuplot> set trange [0:pi/2];
+%gnuplot> plot mu(t,1.0),mu(t,3.0)
+%gnuplot> plot mu(t,1.0),mu(t,3.0),mu(t,10.0)
+%gnuplot> plot mu(t,1.0),mu(t,3.0),mu(t,10.0),mu(t,1.999),mu(t,2.0001)
+%gnuplot> plot mu(t,1.0),mu(t,3.0),mu(t,10.0),mu(t,1.999),mu(t,2.0001),mu(t,20.0
+%nor(t,p) = (abs(sin(t)) ** p + abs(cos(t)) ** p) ** (1.0 / p);
+%mut(t,p,q) = (nor(t,p) / nor(t,q)) ** (p * q / (q - p));
+%plot mut(t,1.001,1.01),mut(t,2.0,1.0),mut(t,3.0,2.0),mut(t,20.0,19.0)
+%
+%octave:22> ps = linspace(1,1.999,20);
+%octave:23> for k=1:length(ps) p=ps(k);zs(k) = (norm(vl,p) / norm(vl,2)) ^ (2 * p / (2 - p));endfor
+%octave:24> plot(ps,zs)
+%octave:25> plot(ps,zs,'*-r;;')
+
+Thus to approximately minimize \BIC, one could minimize
+%\[\obf{\vlam} \defeq 2\ro \ln\Parens{\RMSECV\Parens{\vlam}} + (\mrpq{\vlam}) \ln\Parens{\ro},\]
+\[\obf{\vlam} \defeq \ln\Parens{\MSECV\Parens{\vlam}} + (\ln\Parens{\ro}\,
+\mrpq{\vlam})/(\ro-\fc-1),\]
+the gradient of which is
+%\[
+%\glam{\obf{\vlam}} =
+%2\ro\frac{\glam{\RMSECV\Parens{\vlam}}}{\RMSECV\Parens{\vlam}} +
+%\ln\Parens{\ro} \glam{\mrpq{\vlam}}.
+%\]
+\[
+\glam{\obf{\vlam}} =
+\frac{\glam{\MSECV\Parens{\vlam}}}{\MSECV\Parens{\vlam}} +
+(\ln\Parens{\ro} \glam{\mrpq{\vlam}}) / (\ro-\fc-1).
+\]
+
+%Thus to approximately minimize \BIC, one could minimize
+%\[\obf{\vlam} \defeq \RMSECV\Parens{\vlam} \Parens{\ro^{1/2\ro}}^{\mrpq{\vlam}},\]
+%the gradient of which is
+%\begin{align*}
+%\glam{\obf{\vlam}} &=
+%\Parens{\glam{\RMSECV}}\Parens{\ro^{1/2\ro}}^{\mrpq{\vlam}} + 
+%%\RMSECV \Parens{\ro^{1/2\ro}}^{\mrpq{\vlam}} \ln{\ro^{1/2\ro}}\glam{\mrpq{\vlam}}.
+%\obf{\vlam} \ln{\ro^{1/2\ro}}\glam{\mrpq{\vlam}},\\
+%&= \obf{\vlam}\Parens{ \frac{\glam{\RMSECV\Parens{\vlam}}}{\RMSECV\Parens{\vlam}} +
+%\ln{\ro^{1/2\ro}}\glam{\mrpq{\vlam}}}.
+%\end{align*}
+
+%\subsection{Enforcing Positivity}
+%
+%As noted in \secref{unembed}, there is no loss in generality in assuming that
+%\vlam consists of positive elements.  However, without enforcing this
+%condition, the BFGS algorithm will take steps that ``overshoot'' zero, giving
+%negative elements in \vlam.  The simple fix is to let $\vlam = \exp{\vxi},$
+%that is, elementwise, $\lame{j} = \exp{\xime{j}}$, and minimize with respect to
+%\vxi.  The change to the objective function and gradient is minimal:
+%\[\obfa{\vxi} = \obf{\exp{\vxi}},\quad\text{and}\quad
+%\xilam{\obfa{\vxi}} = \diag{\exp{\vxi}}\glam{\obf{\exp{\vxi}}}.
+%\]
+%
+%Since \obf{\vlam} is invariant under a nonzero scaling, 
+%\(\obf{\exp{\vxi}} = \obf{s\exp{\vxi}} = \obf{\exp{\ln{s}}\exp{\vxi}}\) for any
+%positive $s$.  
+%%Thus we can add $\ln{s}$ to each element of \vxi without
+%%changing the value of \obf{\exp{\vxi}}.  
+%Thus 
+%can assume, without loss of generality, that $\sum_j \xime{j}$ is any number 
+%we choose.  This makes it simple to reduce the number of degrees of freedom.
+%UNFOLD
+
+\section{Implementation Notes}\label{sec:impnotes}%FOLDUP
+
+The method was implemented in the Matlab\textsuperscript{\textsc{tm}}{}
+language.  All results in this paper were performed in the 
+GPL Matlab clone, GNU Octave
+(version 2.1.69) \cite{eaton2001octave}, compiled with BLAS \cite{Dj2002}, on an AMD 
+Athlon 64 4000+ (2.4 G\Hz) running Gentoo Linux, 2.6.15 kernel.
+
+The BFGS and backtracking line search algorithms were implemented as outlined
+by Nocedal and Wright.  \cite{NjWsj1999}  Sample code for the PLS
+and Jacobian computation are given in \secref{code}.  The objective function
+was supplemented by an optional term to simulate \BIC{}, with the $p$ and $q$
+terms of \mrpq{} tunable parameters.  
+The inverse of the sample standard deviation of each channel is generally used
+as the starting iterate, \vlamk[0].  The initial approximation to the Hessian
+is taken as some constant times the identity matrix.  Termination of BFGS was
+triggered by the computation of a gradient smaller in norm than a lower bound,
+by an upper limit on the number of major iterates, function evaluations, or
+achievement of a lower bound on the change of the objective function.
+Response weighting (\ie WPLS) has not yet been implemented.
+
+Selection of optimal wavelengths was performed by minimization of a delete-$d$
+\RMSECV{} or \aBIC{}, with the different models determined by ordering of \vlam
+or by $\diag{\regb}\vlam$, whichever is chosen by the information criterion. 
+The trivial model (responses are normal with approximated means and variances
+and predictors are ignored) is also compared. 
+%Computation of the approximate variance is performed by standard
+%deviation of the residual of a single fit, or optionally by the \MSECV{}.  
+An optional post-selection minimization is allowed on the selected channels.
+The final results consist of a subset of the available channels and predictor
+weightings for those channels.   This bit of cheating allows the method to keep
+the advantages of properly weighted predictors.  Note that the weighting is
+irrelevant and ignored in the case where the number of selected channels is
+equal to the number of latent factors.
+
+%Unless specified by the user, the system must choose the cross validation
+%groups.  By default, this is done by sorting the objects by the 
+%%absolute value of the centered 
+%response variable, then assigning the object with the \kth{j} 
+%largest %absolute centered 
+%response to the $\kth{\wrapparens{j\mod{g}}}$ group, 
+%where $g$ is the desired number of groups.  This division of the objects, which
+%I call ``interleaving'', provides an even distribution of response values in the
+%groups.  The number of groups and number of latent factors is given by the user.
+%
+Unless specified by the user, the system must choose the cross validation
+groups.  By default, this is done using the Monte Carlo framework suggested by Shao:
+$2\ro$ different partitions of $\ro^{3/4}$ calibration
+objects and $\ro - \ro^{3/4}$ test objects are randomly selected.
+%UNFOLD
+
+\section{Experiments and Results}%FOLDUP
+
+\SRCEK{} was tested on the three data sets used to compare wavelength
+selection procedures by Forina \etal  \cite{Forinaetal2004,ForinaPC2006}
+As in the original publication, these are referred to as 
+\dsm, \dsk, and \dsa.  The data set \dsm{}
+consists of moisture responses of 60 samples of soy flour, with predictors
+measured with a filter instrument and originally appeared in a paper by Forina
+\etal \cite{Forinaetal1995}.  The data set \dsk{}, originally from a paper by
+Kalivas \cite{Kjh1997}, consists of moisture responses of 100 samples of wheat
+flour, with 701 responses measured by an NIR spectrometer.  The data set \dsa{}
+consists of 400 randomly generated objects with 300 channels.  The channels
+are grouped into six classes, with a high degree of correlation between
+elements of the first five classes, each consisting of 10 channels.  The response was 
+generated by a linear combination of five of the responses (the first response
+in each of the first five classes), plus some noise; the 250 channels of
+the sixth class are entirely irrelevant to the responses.  However, the level
+of noise in the response is large enough to mask the effects of the fifth
+relevant channel.  The objects are divided into a training set of 100
+objects, and an external set with the remainder.
+
+In order to allow meaningful comparison between the results found here and in
+the study of Forina \etal, I report \RMSECV values using the same CV
+groupings of that study.  These were generated by dividing the objects into
+groups in their given order.  Thus \eg the first group consists of the
+\skth{1}, \skth{6}, \skth{11} objects and so on, the second group is the
+\skth{2}, \skth{7}, \skth{12} objects and so on, \etc  Five groups are used.
+\cite{Forinaetal2004,ForinaPC2006}  However, the objective function was computed
+based on other groupings, as described below.
+
+Note that, in light of Shao's studies, the CV groupings used by Forina 
+\etal seem sparse both in number and in the number deleted ($\ro/5$). 
+For this reason, it may be meaningless to compare the different subset selection 
+techniques based on the \RMSECV{} for this grouping.  However, since
+the channels retained by the different methods are not reported for the data
+sets \dsk{} and \dsa, I can only compare the results of \SRCEK to
+those of the other methods by the \RMSECV{} of this grouping or by the \aBIC
+based on that \RMSECV{}.  For \dsm,
+Forina \etal report the selected channels, making comparison based on
+Monte Carlo CV groupings possible.  These are denoted by \RMSEMCCV, and based on
+120 delete-$38$ groupings.
+
+%It is difficult to compare the different channel selection methods described
+%by Forina \etal, as they result in different \RMSECV{} values and number of
+%predictors selected.  For the data sets \dsm{} and \dsk{} there are no external
+%data to test the quality of the model built.  While, to a first approximation,
+%\RMSECV correlates well with predictive power over unobserved data, it is not
+%impervious to overfitting, especially when the weights are optimized by BFGS.
+%Thus I propose the results be compared by the approximation to the \BIC{} defined by 
+%\[\BIC{} \approx \aBIC \defeq 2 \ro \ln\Parens{\RMSECV{}} + (k+2) \ln\Parens{\ro},\]
+%where $k$ is the number of retained predictors.  In this formulation
+%$2\ln\Parens{\RMSECV}$ approximates the estimate of log-likelihood of the data
+%conditional to the given model.
+%This measure must be taken with a grain of salt, as it does not clearly
+%correlate with quality of prediction over an external set.
+
+%Ideally \RMSECV would be
+%replaced by \RMSEP in this expression, but those values are not reported in the
+%earlier study and cannot be reconstructed in the case where the predictors chosen
+%by each method are not reported.
+%
+%This measure must be taken with a grain of salt, as it does not clearly
+%correlate with quality of prediction over an external set, as indicated in
+%\figref{sdvbic}, which plots the ``external set residual SD'' as reported by
+%Forina \etal (Table 8) versus the \aBIC for fourteen selection methods.  The
+%general trend indicates that a larger \aBIC is a necessary condition for good
+%explanatory power, but is not a sufficient condition.
+%
+%\begin{figure}[htb!]%monofigure%FOLDUP
+%\centering
+%	\psfrag{SDvaBIC}[][][0.5]{SD vs. \aBIC}
+%	\includegraphics[angle=270,width=.65\columnwidth]{sdvbic.eps}
+%\caption{The external set residual SD is plotted versus the approximate \BIC{},
+%\aBIC, for the 14 selection methods applied to the data set \dsa, as reported in Table 8
+%of Forina \etal \cite{Forinaetal2004}
+%}\label{fig:sdvbic}
+%\end{figure}%UNFOLD
+
+\SRCEK{} was applied to \dsm{} with 120 delete-$38$ Monte Carlo CV groups,
+using \RMSEMCCV as
+the objective function for 2 and 3 factor PLS.  Termination was triggered by
+small relative change in the objective (relative tolerance in objective of
+\tenex{}{-5}), which was achieved in both cases in at most 25 major iterates.  
+Model selection is performed by minimization of \aBIC.
+Results are summarized in \tabref{dsmtable},
+and compared to the results found by Forina \etal  For 2 factor PLS, \SRCEK{}
+selects 2 channels, L14:2100 and L16:1940, the same choice made by SOLS and
+GA-OLS.  For 3 factor PLS, \SRCEK{} selects 3 channels, adding L20:1680 to
+the previous two channels.  The 2 factor choice is preferred by both the CV
+error and \aBIC.
+In this case, \aBIC matches my intuitive ordering of these results.
+%, balancing overfitting and underfitting. 
+
+\begin{table}[htb!]%FOLDUP
+\begin{center}
+\footnotesize
+%\begin{tabular}{rrll}
+%method&k&\tiny{\RMSECV{}}&\aBIC\\
+%\hline
+%PLS&19&1.369&124\\   %1
+%UVE 95\%&19&1.346&122\\   %4
+%MAXCOR&19&1.268&114\\   %9
+%GOLPE I&15&1.319&103\\   %6
+%UVE 90\%&12&1.338&92.3\\   %5
+%MUT&8&1.354&77.3\\   %2
+%UVE normal&7&1.350&72.9\\   %3
+%GOLPE II&6&1.256&60.1\\   %11
+%IPW&3&1.307&52.6\\   %7
+%GOLPE III&3&1.307&52.6\\   %8
+%ISE&2&1.264&44.5\\   %10
+%SOLS(5)&2&1.203\footnotemark&38.6\\		%12
+%\begin{tabular}{rrrll}
+%method & \fc & k & \tiny{\RMSECV}& \tiny{\RMSEMCCV}\\
+%\hline
+%             PLS & 2 & 19 & 1.369 & 1.471\\%  num 1
+%             MUT & 2 & 8 & 1.354 & 1.463\\%  num 2
+%       UVE norml & 2 & 7 & 1.35 & 1.46\\%  num 3
+%          UVE 95 & 2 & 10 & 1.346 & 1.447\\%  num 4
+%          UVE 90 & 2 & 12 & 1.338 & 1.439\\%  num 5
+%             IPW & 3 & 3 & 1.308 & 1.415\\%  num 7
+%       GOLPE   I & 2 & 15 & 1.319 & 1.411\\%  num 6
+%       GOLPE III & 2 & 3 & 1.307 & 1.368\\%  num 8
+%             ISE & 2 & 2 & 1.264 & 1.34\\%  num 10
+%       GOLPE  II & 2 & 6 & 1.256 & 1.339\\%  num 11
+%          MAXCOR & 2 & 10 & 1.268 & 1.331\\%  num 9
+%        SOLS (5) & 2 & 2 & 1.203\footnotemark & 1.269\\%  num 12
+%\hline
+%      \SRCEK (2) & 2 & 2 & 1.203 & 1.269\\%  num 13
+%      \SRCEK (3) & 3 & 3 & 1.259 & 1.293\\%  num 14
+%\begin{tabular}{rrrlll}
+%method & \fc & k & \tiny{\RMSECV}& \tiny{\RMSEMCCV} & \aBIC\\
+%\hline
+%             PLS & 2 & 19 & 1.369 & 1.438 & 2.09\\%  num 1
+%          UVE 95 & 2 & 10 & 1.346 & 1.395 & 1.38\\%  num 4
+%       GOLPE   I & 2 & 15 & 1.319 & 1.392 & 1.74\\%  num 6
+%          UVE 90 & 2 & 12 & 1.338 & 1.387 & 1.52\\%  num 5
+%          MAXCOR & 2 & 10 & 1.268 & 1.326 & 1.28\\%  num 9
+%             MUT & 2 & 8 & 1.354 & 1.409 & 1.26\\%  num 2
+%       UVE norml & 2 & 7 & 1.35 & 1.405 & 1.18\\%  num 3
+%       GOLPE  II & 2 & 6 & 1.256 & 1.306 & 0.965\\%  num 11
+%             IPW & 3 & 3 & 1.308 & 1.372 & 0.852\\%  num 7
+%       GOLPE III & 2 & 3 & 1.307 & 1.367 & 0.841\\%  num 8
+%             ISE & 2 & 2 & 1.264 & 1.318 & 0.696\\%  num 10
+%        SOLS (5) & 2 & 2 & 1.203 & 1.247 & 0.585\\%  num 12
+%\hline
+%      \SRCEK (2) & 2 & 2 & 1.203 & 1.247 & 0.585\\%  num 13
+%      \SRCEK (3) & 3 & 3 & 1.259 & 1.275 & 0.706\\%  num 14
+
+\begin{tabular}{rrrll|ll}
+			method & \fc & k & \tiny{\RMSECV} & \aBIC & \tiny{\RMSEMCCV} & \aBIC\\
+\hline
+             PLS & 2 & 19 & 1.369 & 1.99 & 1.438 & 2.09\\%  num 1
+             MUT & 2 & 8 & 1.354 & 1.18 & 1.407 & 1.26\\%  num 2
+       UVE norml & 2 & 7 & 1.350 & 1.10 & 1.403 & 1.18\\%  num 3
+          UVE 95 & 2 & 10 & 1.346 & 1.31 & 1.395 & 1.38\\%  num 4
+       GOLPE   I & 2 & 15 & 1.319 & 1.63 & 1.389 & 1.73\\%  num 6
+          UVE 90 & 2 & 12 & 1.338 & 1.44 & 1.387 & 1.52\\%  num 5
+             IPW & 3 & 3 & 1.308 & 0.756 & 1.361 & 0.836\\%  num 7
+       GOLPE III & 2 & 3 & 1.307 & 0.752 & 1.356 & 0.824\\%  num 8
+          MAXCOR & 2 & 10 & 1.268 & 1.19 & 1.318 & 1.27\\%  num 9
+             ISE & 2 & 2 & 1.264 & 0.613 & 1.311 & 0.686\\%  num 10
+       GOLPE  II & 2 & 6 & 1.256 & 0.887 & 1.298 & 0.953\\%  num 11
+        SOLS (5) & 2 & 2 & 1.203\footnotemark & 0.514 & 1.240 & 0.574\\%  num 12
+\hline
+      \SRCEK & 2 & 2 & 1.203 & 0.514 & 1.240 & 0.574\\%  num 13
+      \SRCEK & 3 & 3 & 1.259 & 0.680 & 1.285 & 0.720\\%  num 14
+\end{tabular}
+\end{center}
+\caption{Results from selection methods applied to data set \dsm{} are shown ordered
+by decreasing \RMSEMCCV (120 delete-$38$ MC groupings), with results from \SRCEK{}.  Adapted from the study of Forina \etal \cite{Forinaetal2004} The number of retained channels
+is indicated by $k$, the number of latent factors is \fc.  The \RMSECV based on
+the groupings of Forina \etal are also given. Two \aBIC{} values are reported,
+based on the Forina and Monte Carlo CV groupings. 
+\footnotesize{\thefootnote{}. Last digit apparently misreported 
+by Forina \etal}}\label{tab:dsmtable}
+\end{table}%UNFOLD
+
+The results of \SRCEK{} applied to \dsk{} are summarized in \tabref{dsktable},
+and compared to the results from the previous study.  Several experiments were
+attempted, each using 3--5 factors.  The first experiment, (a), uses the same
+CV groupings as Forina \etal, and minimizes and selects based on \RMSECV for
+this grouping.  In experiments (b) and (c), 240 delete-$68$ MC CV groups are
+used, \RMSECV is minimized, and channel selection is based on, respectively, 
+\RMSECV and \aBIC.  In experiments (d) and (e), 120 delete-$68$ MC CV groups
+are used, the embedded \aBIC (using \mrpq[1,2]{}) is minimized, and selection
+is based on, respectively, \aBIC and \RMSECV.  The final models of all
+experiments used to compute \RMSECV for the same 200 delete-$68$ MC CV
+grouping, to facilitate comparison.  The maximum acceptable number of
+channels was taken to be $50$.
+
+\begin{table}[htb!]%FOLDUP
+\begin{center}
+\footnotesize
+\begin{tabular}{rrrlr|l}
+method&\fc&k&\tiny{\RMSECV}&\aBIC&\tiny{\RMSEMCCV}\\
+\hline
+%PLS&5&701&0.2218&3.13E+01&\\   %6
+%MAXCOR&5&684&0.2217&3.05E+01&\\   %8
+%UVE 95\%&5&657&0.2227&2.92E+01&\\   %3
+%GOLPE I&6&648&0.2216&2.91E+01&\\   %5
+%MUT&6&575&0.2227&2.55E+01&\\   %4
+%GOLPE II&6&352&0.2167&1.44E+01&\\   %10
+%GOLPE III&6&32&0.2231&-1.42E+00&\\   %2
+%LASSO&14&14&0.2153&-2.31E+00&\\   %13
+%VS&6&14&0.2111&-2.42E+00&\\   %15
+%IPW 3&3&11&0.2174&-2.52E+00&\\   %9
+%IPW 2&2&11&0.2155&-2.55E+00&\\   %11
+%GAPLS&6&11&0.2078&-2.60E+00&\\   %16
+%ISE&2&7&0.2151&-2.74E+00&\\   %12
+%SOLS(2)&2&2&0.2408&-2.75E+00&\\   %1
+%SOLS(4)&4&4&0.2207&-2.83E+00&\\   %7
+%GAOLS a&4&4&0.2154&-2.88E+00&\\   %14
+%GAOLS b&4&4&0.209&-2.94E+00&\\   %17
+%
+PLS&5&701&0.2218&31.3&n/a\\   %6&&
+MAXCOR&5&684&0.2217&30.5&n/a\\   %8&&
+UVE 95\%&5&657&0.2227&29.2&n/a\\   %3&&
+GOLPE I&6&648&0.2216&29.1&n/a\\   %5&&
+MUT&6&575&0.2227&25.5&n/a\\   %4&&
+GOLPE II&6&352&0.2167&14.4&n/a\\   %10&&
+GOLPE III&6&32&0.2231&-1.42&n/a\\   %2&&
+LASSO&14&14&0.2153&-2.31&n/a\\   %13&&
+VS&6&14&0.2111&-2.42&n/a\\   %15&&
+IPW 3&3&11&0.2174&-2.52&n/a\\   %9&&
+IPW 2&2&11&0.2155&-2.55&n/a\\   %11&&
+GAPLS&6&11&0.2078&-2.60&n/a\\   %16&&
+ISE&2&7&0.2151&-2.74&n/a\\   %12&&
+SOLS(2)&2&2&0.2408&-2.75&n/a\\   %1&&
+SOLS(4)&4&4&0.2207&-2.83&n/a\\   %7&&
+GAOLS a&4&4&0.2154&-2.88&n/a\\   %14
+GAOLS b&4&4&0.2090&-2.94&n/a\\   %17&&
+\hline 					                         %forina cv, unweighted.
+\SRCEK (a) &3&49&0.2007&-0.861&0.2166\\ %&0.2030\\ % FOR RsR  1149839860&&
+\SRCEK (a) &4&50&0.1869&-0.931&0.3444\\ %&0.2171\\ %&&
+\SRCEK (a) &5&40&0.1843& -1.42&0.2173\\ %&0.2445\\ %&&
+\SRCEK (b) &3&50&0.2013&-0.807&0.2153\\ %&0.2023\\ % RsR  1149775582&&
+\SRCEK (b) &4&49&0.1914&-0.931&0.2090\\ %&0.1945\\ %&&
+\SRCEK (b) &5&49&0.1848&-0.976&0.2074\\ %&0.2017\\ %&&
+\SRCEK (c)  &3&9&0.2118& -2.67&0.2254\\ %&0.2233\\ % RsB 1149838838&&
+\SRCEK (c)  &4&8&0.1992& -2.84&0.2218\\ %&0.2191\\ %&&
+\SRCEK (c)  &5&5&0.2093& -2.88&0.2350\\ %&0.2093\\ %&&
+\SRCEK (d)  &3&3&0.2479& -2.65&0.2643\\ %&0.2479\\ % BsB 1149700380&&
+\SRCEK (d)  &4&4&0.2318& -2.73&0.2500\\ %&0.2318\\ %&&
+\SRCEK (d) &5&31&0.2626& -1.16&0.2936\\ %&0.2366\\ %&&
+\SRCEK (e) &3&10&0.2187& -2.56&0.2344\\ %&0.3711\\ % BsR 1149775042&&
+\SRCEK (e) &4&18&0.2079& -2.27&0.2301\\ %&0.2161\\ %&&
+\SRCEK (e) &5&31&0.2626& -1.16&0.2936\\ %&0.2366\\ %&&
+%\SRCEK(3) d&3&3&0.2305&-2.79E+00&0.25195\\
+%\SRCEK(3) d&4&20&0.2739&-1.62E+00&0.30089\\
+%\SRCEK(3) d&5&5&0.2877&-2.25E+00&0.3179\\
+%\SRCEK(3) c&3&11&0.231&-2.40E+00&0.24823\\
+%\SRCEK(3) c&4&24&0.2627&-1.51E+00&0.28804\\
+%\SRCEK(3) c&5&17&0.2779&-1.73E+00&0.31725\\
+%\SRCEK(3) a&3&30&0.2017&-1.76E+00&0.20896\\
+%\SRCEK(3) a&4&28&0.1914&-1.95E+00&0.20958\\
+%\SRCEK(3) a&5&26&0.1935&-2.01E+00&0.20842\\
+%\SRCEK(3) b&3&6&0.2068&-2.86E+00&0.22187\\
+%\SRCEK(3) b&4&8&0.202&-2.81E+00&0.21891\\
+%\SRCEK(3) b&5&8&0.1993&-2.83E+00&0.22755\\
+%method&\fc&k&\tiny{\RMSECV}&\aBIC\\
+%\hline
+%PLS&5&701&0.2218&31.3\\   %6
+%MAXCOR&5&684&0.2217&30.5\\   %8
+%UVE 95\%&5&657&0.2227&29.2\\   %3
+%GOLPE I&6&648&0.2216&29.1\\   %5
+%MUT&6&575&0.2227&25.5\\   %4
+%GOLPE II&6&352&0.2167&14.4\\   %10
+%GOLPE III&6&32&0.2231&-1.42\\   %2
+%LASSO&14&14&0.2153&-2.31\\   %13
+%VS&6&14&0.2111&-2.42\\   %15
+%IPW 3&3&11&0.2174&-2.52\\   %9
+%IPW 2&2&11&0.2155&-2.55\\   %11
+%GAPLS&6&11&0.2078&-2.60\\   %16
+%ISE&2&7&0.2151&-2.74\\   %12
+%SOLS(2)&2&2&0.2408&-2.75\\   %1
+%SOLS(4)&4&4&0.2207&-2.83\\   %7
+%GAOLS a&4&4&0.2154&-2.88\\   %14
+%GAOLS b&4&4&0.209&-2.94\\   %17
+%\hline
+%\SRCEK (3) a&3&15&0.2072&-2.43\\
+%\SRCEK (4) a&4&21&0.1911&-2.29\\
+%\SRCEK (5) a&5&23&0.2065&-2.03\\
+%method&k&\tiny{\RMSECV{}}&\aBIC\\
+%\hline
+%PLS&701&0.2218&2940\\   %6
+%MAXCOR&684&0.2217&2860\\   %8
+%UVE 95\%&657&0.2227&2730\\   %3
+%GOLPE I&648&0.2216&2690\\   %5
+%MUT&575&0.2227&2360\\   %4
+%GOLPE II&352&0.2167&1320\\   %10
+%GOLPE III&32&0.2231&-143\\   %2
+%LASSO&14&0.2153&-233\\   %13
+%VS&14&0.2111&-237\\   %15
+%IPW 3&11&0.2174&-245\\   %9
+%IPW 2&11&0.2155&-247\\   %11
+%GAPLS&11&0.2078&-254\\   %16
+%ISE&7&0.2151&-266\\   %12
+%SOLS(2)&2&0.2408&-266\\   %1
+%SOLS(4)&4&0.2207&-275\\   %7
+%GA-OLS a&4&0.2154&-279\\   %14
+%GA-OLS b&4&0.2090&-285\\   %17
+%\hline
+%\SRCEK (4)&7&0.2032&-277\\
+%\SRCEK (5)&5&0.2134&-277\\
+%\SRCEK (3)&16&0.2014&-238\\
+%\SRCEK (6)&15&0.2200&-225\\
+%\SRCEK (3)&6&0.2257&-260.8\\
+%\SRCEK (5)&5&0.2345&-257.8\\
+%\SRCEK (4)&10&0.2180&-249.4\\
+%\SRCEK (2)&5&0.2875&-217.1\\
+%\SRCEK(4,\mrpq[1,1.1]{})&
+\end{tabular}
+\end{center}
+\caption{Results from selection methods applied to data set \dsk{} are shown ordered
+by decreasing \aBIC, with results from \SRCEK{}.  
+The results from \SRCEK{} are also tested against a MC CV grouping
+consisting of 200 delete-$68$ partitions, yielding the \RMSEMCCV{} shown.}\label{tab:dsktable}
+\end{table}%UNFOLD
+
+As expected, when trained on the CV groups of Forina \etal, \SRCEK is able to
+produce small errors for that CV grouping, beating all the methods studied by
+Forina \etal.  A number of caveats are necessary:  the \RMSECV{} values
+reported use predictor weighting to build and test the models.  When the
+weights are not used, the \RMSECV{} values are not as impressive.  For example,
+for experiment (a), $4$ factors, the reported $0.1869$ becomes $0.2171$ when
+the predictor weighting is not used.   I think the objection here should not be 
+that \SRCEK uses predictor weighting, but that the methods studied previously
+did not, which puts them at a disadvantage when compared to \SRCEK.
+A more serious objection is that a small
+\RMSECV{} for the CV groupings of Forina \etal does not appear to imply a small
+\RMSECV{} for the MC CV groupings, although the inverse implication does seem
+to hold.  This gives confidence in the results of \eg experiment (b)-$5$, which
+gives small \RMSECV{} for both CV groupings.  
+
+%\SRCEK (a) &4&50&0.1869&-0.931&0.3444\\ %&0.2171\\ %&&
+%\SRCEK (a) &5&40&0.1843& -1.42&0.2173\\ %&0.2445\\ %&&
+%\SRCEK (b) &3&50&0.2013&-0.807&0.2153\\ %&0.2023\\ % RsR  1149775582&&
+%\SRCEK (b) &4&49&0.1914&-0.931&0.2090\\ %&0.1945\\ %&&
+%\SRCEK (b) &5&49&0.1848&-0.976&0.2074\\ %&0.2017\\ %&&
+
+The effect of the objective function on the algorithm outcome for this
+data set is shown in \figvref{blams}.  This graph shows the effective regression
+vector $\LAM\regb\Parens{\vlam},$ for the \vlam found by BFGS minimization, for
+experiments (b) and (d), using $4$ latent factors.  
+When \RMSECV alone is minimized, the regression vector has no clear
+structure.  However, when \aBIC is minimized, the regression vector divides the
+channels into two groups, those with `low' relevance, and those with `high'
+relevance.  As expected from spectroscopic data, the relevance of relevant
+channels is more or less continuous.  Note, however, that minimizing on the
+information criterion selects some of the same channels as minimizing on
+\RMSECV{}, but this relationship does not strictly hold.  For example, some
+channels in the range 1-10 appear to be given high relevance by \aBIC but not
+by \RMSECV{}.  I suspect that there is some dependence on the initial vector
+\vlam, and the CV groups used.
+
+\begin{figure}[htb!]%subfigure%FOLDUP
+\centering
+		\psfrag{blam1}[rb][rb][0.5]{$\LAM\regb\Parens{\vlam}$}
+		\psfrag{blam2}[rb][rb][0.5]{$\LAM\regb\Parens{\vlam}$}
+		\includegraphics[width=.45\columnwidth,angle=270]{blams2.eps}
+\caption{The absolute value of the elements of vector $\LAM\regb\Parens{\vlam}$
+are plotted for post-optimization \vlam on data set \dsk.  At top, \RMSECV for
+MC CV groups was used as the objective function (experiment (b), $4$ latent
+factors).  At bottom, the embedded \aBIC using the same CV groups for the
+\RMSECV part and \mrpq[1,2]{}, was minimized (experiment (d), $4$ latent
+factors).}\label{fig:blams}
+%\subfigure[a]{
+%		\label{fig:kfoura}
+%		\psfrag{regb}[rb][rb][0.5]{$\regb$}
+%		\psfrag{lambda}[rb][rb][0.5]{$\vlam$}
+%		\includegraphics[width=.45\columnwidth,angle=270]{k4_displambda.eps}}
+%\hspace{.3in}
+%\subfigure[b]{
+%		\label{fig:kfourb}
+%		\psfrag{regb}[rb][rb][0.5]{$\regb$}
+%		\psfrag{lambda}[rb][rb][0.5]{$\vlam$}
+%		\includegraphics[width=.45\columnwidth,angle=270]{k4_BIC_displambda.eps}}
+%\caption{some caption.}
+\end{figure}%UNFOLD
+
+%vector of all ones.  The same CV groups used by Forina \etal were used to
+%compute the objective function, and the method was tested with 3, 4, 5, and 6 factors. 
+%%The method was tested
+%%with 20 interleaved CV groups and 3, 4, 5, and 6 factors. 
+%Termination was achieved by limiting the relative change in the objective
+%function.
+%%Contrary to the assertion of Forina \etal that SOLS performs poorly on this
+%%data set, it produces a model with relatively low \aBIC.
+
+%FIX: are these results final? are the CV groupings used as described?
+
+The results of \SRCEK{}, and other methods, applied to \dsa{} are summarized in 
+\tabref{dsatable}. Two experiments were
+attempted, each using 3--5 factors.  Each use autoscaling to generate the 
+initial \vlam, and 120 delete-$75$ MC CV groups for computing \RMSECV.  
+In both experiments, 
+the embedded \aBIC (using \mrpq[0.8,2.4]{}) is minimized, and selection is based
+on \aBIC and \RMSECV, respectively, in experiments (f) and (g).
+The models built by these experiments are tested on a Monte Carlo CV grouping 
+(200 delete-$68$ groups consisting of the 100 test data, not the external set),
+and the computed \RMSEMCCV is shown in the table.   Note that there is some
+mismatch between the \RMSECV for the groups used by Forina \etal and the
+\RMSEMCCV for these groupings.  These measures produce different orderings of
+the models, casting some suspicion on the sparse CV groupings used by the
+previous study.
+
+The post-optimized effective regression vector, $\LAM\regb\Parens{\vlam},$ is plotted in
+\figvref{goodart} for this experiment (g) with $3$ factors, showing the discovered 
+relevance of the channels.  All but one of the 250 irrelevant channels for this 
+data set are found to have a low weight.  Selection by \RMSECV{} picks $6$
+channels, numbers $4, 5, 10, 20, 24, 40$, which includes channels from four
+of the five relevant correlated groups of channels.  The $5$ factor
+experiment picks channels $1, 2, 3, 4, 5, 9, 10, 11, 13, 14, 15, 19, 20, 24,
+40, 50$, which includes channels from each of the five correlated relevant
+groups, and no irrelevant channels.  This may be attributable only to chance,
+however, as the optimal effective regression vector $\LAM\regb\Parens{\vlam}$
+after optimization in this experiment attributes high weights to a number of
+irrelevant channels.
+
+\begin{table}[htb!]%FOLDUP
+\begin{center}
+\footnotesize
+%\begin{tabular}{rrlc|rl}
+%method&k&\tiny{\RMSECV{}}&\aBIC&\#bad&ext \RMSEP\\
+%\hline
+%GOLPE I&279&207.6&2360&229&229.1\\			%2
+%GOLPE II&142&141.1&1650&102&207.9\\			%5
+%ISE&109&122.2&1470&63&206.7\\			%6
+%UVE&67&139.5&1310&17&189.6\\			%11
+%MUT&59&147.8&1280&9&184.5\\			%13
+%ISE&61&121.3&1250&17&189.1\\			%12
+%MAXCOR&42&171.7&1230&2&192.6\\			%9
+%GOLPE III&34&166.1&1190&12&199.8\\			%7
+%SOLS(4)&4&166.9&1050&0&195.3\\			%8
+%GA-PLS&17&122.2&1050&11&214.0\\			%4
+%IPW&4&163.3&1050&0&192.6\\			%10
+%SOLS(5)&5&154.8&1040&0&180.5\\			%14
+%SOLS(20)&20&106.1&1030&13&240.5\\			%1
+%GA-OLS&10&126.0&1020&3&218.3\\			%3
+%\hline
+%\SRCEK(5)&68&26.47&978&59&279.5\\
+%\SRCEK(6)&78&23.35&999&64&250.1\\
+%\SRCEK(4)&8&160.7&1060&0&196.9\\
+%\SRCEK(4,\mrpq[1,1.1]{})&8&160.6&1060&0&194.1\\
+%\SRCEK(5,\mrpq[1,1.1]{})&8&155.6&1060&2&200.3\\
+%\SRCEK(6,\mrpq[1,1.1]{})&10&163.5&1080&2&206.5\\
+%\SRCEK(4,\mrpq[2,3]{})&17&162.5&1100&1&200.4\\
+%\SRCEK(5,\mrpq[2,3]{})&15&157.6&1090&3&200.9\\
+%\SRCEK(6,\mrpq[2,3]{})&12&163.9&1080&7&213.9\\
+%\begin{tabular}{rrrlc|rl|l}
+%method&\fc&k&\tiny{\RMSECV}&\aBIC&$\text{k}_{\text{bad}}$&ext
+%\tiny{\RMSEP}&\tiny{\RMSEMCCV}\\
+%\hline
+%GOLPE I &3&279&207.6&24.1&229&229.1&\\   %2&&
+%GOLPE II&3&142&141.1&16.7&102&207.9&\\   %5&&
+%ISE&3&109&122.2&14.8&63&206.7&\\   %6&&
+%UVE&3&67&139.5&13.1&17&189.6&\\   %11&&
+%MUT&3&59&147.8&12.8&9&184.5&\\   %13&&
+%ISE&3&61&121.3&12.5&17&189.1&\\   %12&&
+%MAXCOR&3&42&171.7&12.3&2&192.6&\\   %9&&
+%GOLPE III&4&34&166.1&11.9&12&199.8&\\   %7&&
+%SOLS(20)&20&20&106.1&10.5&13&240.5&\\   %1&&
+%GAPLS&4&17&122.2&10.4&11&214&\\   %4&&
+%SOLS(4)&4&4&166.9&10.4&0&195.3&\\   %8&&
+%IPW&4&4&163.3&10.4&0&192.6&\\   %10&&
+%SOLS(5)&5&5&154.8&10.3&0&180.5&\\   %14&&
+%GAOLS&10&10&126&10.2&3&218.3&\\   %3&&
+%\hline
+%\SRCEK (4) a&4&4&165.3&10.4&0&198.1&\\
+%\SRCEK (5) a&5&6&157.7&10.4&1&199.5&\\
+%\SRCEK (6) a&6&6&168.4&10.5&0&195.6&\\
+%
+\begin{tabular}{rrrlc|rl|l}
+method&\fc&k&\tiny{\RMSECV}&\aBIC&$\text{k}_{\text{bad}}$&ext
+\tiny{\RMSEP}&\tiny{\RMSEMCCV}\\
+%\hline
+%GOLPE I &3&279&207.6&2.41E+01&229&229.1&\\   %2
+%GOLPE II&3&142&141.1&1.67E+01&102&207.9&\\   %5
+%ISE&3&109&122.2&1.48E+01&63&206.7&\\   %6
+%UVE&3&67&139.5&1.31E+01&17&189.6&\\   %11
+%MUT&3&59&147.8&1.28E+01&9&184.5&\\   %13
+%ISE&3&61&121.3&1.25E+01&17&189.1&\\   %12
+%MAXCOR&3&42&171.7&1.23E+01&2&192.6&\\   %9
+%GOLPE III&4&34&166.1&1.19E+01&12&199.8&\\   %7
+%SOLS(20)&20&20&106.1&1.05E+01&13&240.5&\\   %1
+%GAPLS&4&17&122.2&1.04E+01&11&214&\\   %8
+%SOLS(4)&4&4&166.9&1.04E+01&0&195.3&\\ %4
+%IPW&4&4&163.3&1.04E+01&0&192.6&\\   %10
+%SOLS(5)&5&5&154.8&1.03E+01&0&180.5&\\   %14
+%GAOLS&10&10&126&1.02E+01&3&218.3&\\   %3
+%\hline
+%\SRCEK (3) a&3&4&164.3&1.04E+01&0&196.1&176.2\\
+%\SRCEK (4) a&4&36&170.6&1.20E+01&0&193.3&178.3\\
+%\SRCEK (5) a&5&33&131.1&1.14E+01&14&195.3&148.2\\
+%\SRCEK (6) a&6&23&153.9&1.12E+01&4&209.1&171.1\\
+%\SRCEK (3) b&3&4&164.3&1.04E+01&0&196.1&176.2\\
+%\SRCEK (4) b&4&14&261.5&1.18E+01&0&253.8&277.1\\
+%\SRCEK (5) b&5&5&166.5&1.05E+01&0&199.2&175.1\\
+%\SRCEK (6) b&6&19&154.1&1.10E+01&3&207.5&172.7\\
+\hline
+GOLPE I &3&279&207.6&24.1&229&229.1&n/a\\   %2&
+GOLPE II&3&142&141.1&16.7&102&207.9&n/a\\   %5&
+ISE&3&109&122.2&14.8&63&206.7&n/a\\   %6&
+UVE&3&67&139.5&13.1&17&189.6&n/a\\   %11&
+MUT&3&59&147.8&12.8&9&184.5&n/a\\   %13&
+ISE&3&61&121.3&12.5&17&189.1&n/a\\   %12&
+MAXCOR&3&42&171.7&12.3&2&192.6&n/a\\   %9&
+GOLPE III&4&34&166.1&11.9&12&199.8&n/a\\   %7&
+SOLS(20)&20&20&106.1&10.5&13&240.5&n/a\\   %1&
+GAPLS&4&17&122.2&10.4&11&214.0&n/a\\   %8&
+SOLS(4)&4&4&166.9&10.4&0&195.3&n/a\\ %4&
+IPW&4&4&163.3&10.4&0&192.6&n/a\\   %10&
+SOLS(5)&5&5&154.8&10.3&0&180.5&n/a\\   %14&
+GAOLS&10&10&126.0&10.2&3&218.3&n/a\\   %3&
+\hline
+%\SRCEK (3) f&3&7&240.3&11.3&0&249.4&245.6\\   %1149100163&BICsBIC
+%\SRCEK (4) f&4&31&171.6&11.8&0&194.0&180.0\\
+%\SRCEK (5) f&5&11&261.9&11.7&0&261.8&285.6\\
+%\SRCEK (3) g&3&49&158.9&12.5&5&178.7&171.4\\   %1149065322&BICsRM
+%\SRCEK (4) g&4&43&168.2&12.3&3&198.0&175.4\\
+%\SRCEK (5) g&5&44&160.7&12.3&9&212.7&182.1\\
+\SRCEK (f)&3&4&163.8&10.4&0&194.8&172.2\\ % BsB  1149582978
+\SRCEK (f)&4&4&163.3&10.4&0&192.7&170.9\\
+\SRCEK (f)&5&5&164.6&10.5&0&192.6&175.2\\
+\SRCEK (g)&3&6&162.7&10.5&0&194.1&171.5\\ % BsR 1149536064
+\SRCEK (g)&4&29&146.3&11.4&14&183.8&161.2\\
+\SRCEK (g)&5&16&152.9&10.8&0&179.9&164.6\\
+\end{tabular}
+\end{center}
+\caption{Results from selection methods applied to data set \dsa{} are shown ordered
+by decreasing \aBIC, with results from \SRCEK{}.  The number of uninformative
+channels selected is shown as well as the \RMSEP{} for the external set of 300
+objects. The results from \SRCEK{} are also tested against a MC CV grouping
+consisting of 200 delete-$68$ partitions, yielding the \RMSEMCCV{} shown.  The
+objective function used was the embedded \aBIC.}\label{tab:dsatable}
+%The experiments with $4$ factors appear to fall into a local minima.
+\end{table}%UNFOLD
+
+\begin{figure}[htb!]%FOLDUP
+\centering
+		\psfrag{blam}[rb][rb][0.5]{$\LAM\regb\Parens{\vlam}$}
+		\includegraphics[width=.45\columnwidth,angle=270]{agoodart.eps}
+\caption{The vector $\LAM\regb\Parens{\vlam}$ is plotted for post-optimization
+\vlam on data set \dsa{} from \SRCEK{} (3), experiment (g), using embedded \aBIC
+as objective function.  The 6 selected (by \RMSECV{}) channels are indicated with 
+crosses.  Many of the 50 relevant channels are highly weighted, while most of
+the 250 irrelevant channels have very low weights, with one notable
+exception.  That the highly weighted irrelevant channel was not selected may
+be attributable only to chance.}\label{fig:goodart}
+\end{figure}%UNFOLD
+
+%\subsection{Analysis of \dsm}
+%\subsection{Analysis of \dsk}
+%\subsection{Analysis of \dsa}
+
+%UNFOLD
+
+\section{Directions for Further Study}%FOLDUP
+
+Foremost, it seems one should be able to optimize \RMSECV{} with respect to
+response weightings, \vgam, in addition to predictor weights \vlam.  
+One can easily alter \algref{fullonpls} to also compute the gradients with
+respect to \vgam.  The increased degrees of freedom increases the risk of
+overfitting.   One should alter the embedded information criterion objective function
+described in \secref{objfun} to balance this risk.
+Since it is assumed the data are distributed as 
+\(\ysym_j \sim \trans{\vect{\Xsym}_j}\regb + \rego + \mathcal{N}\Parens{0,\sigma^2/\game{j}},\)
+we have added $\ro - 1$ new estimated parameters, \viz the separate variances
+of each observation.  \cite{Kg1979,Ps1992} One strategy to embed the
+information criterion, then, is to let
+%parameters is $2 + \mrpq{\vlam} + (\ro - \mrpq{\vgam})$, and thus to let
+\(\obf{\vlam} = \ln\Parens{\MSECV\Parens{\vlam}} + (\mrpq{\vlam} -
+\mrpq{\vgam}) \ln\Parens{\ro} / (\ro - \fc - 1).\)  The initial estimate 
+should be that of 
+homoscedasticity.  Comparison of models becomes tricky.  Work is underway on
+this extension.
+
+A theoretical study of the asymptotic consistency of different model selection
+techniques for the case of reduced rank design matrix and PLS modeling would
+provide \SRCEK{} with a more sound method for reversing the embedding, as well
+as a better objective function.  As this problem seems intractable, a
+simulation study might be appropriate.  If this theoretical study reveals that
+one should minimize some combination of \RMSECV (for some tailored CV
+groupings) with model size, I am confident that that measure can be
+continuously embedded using the techniques of this note.
+
+%The use of information criterion appears to work well in reversing the
+%continuous embedding, and perhaps less well in the modified objective function.
+%However, the usage in this context is without a strong theoretical basis; 
+%exploration of this matter would be welcome.  In particular, since
+%\RMSECV with a large number of CV groups punishes overfitting, it may not be an
+%appropriate estimate of likelihood of the model, that is, \aBIC may overpunish
+%overfitting.  Another oddity of this application is that it does not explicitly
+%consider the number of latent factors (although the number of latent
+%factors affects \RMSECV).
+
+The method of ordering the successively larger models based on the optimal
+\vlam, or on the Kronecker product of \vlam with the regression coefficient
+seems rather \adhoc{}.  This step would also benefit from some theory, or could
+perhaps be replaced by strategies
+cribbed from other channel selection techniques (\eg IPW).
+Conversely, some of these techniques may benefit from a preliminary predictor
+weight optimization step via BFGS.
+
+The \SRCEK{} method could also be extended to Kernel PLS regression, however I
+suspect this would require the kernel to also compute derivatives, which
+could be impractical.  \cite{HLetal2003}
+
+
+
+
+
+%like a similar strategy should be possible to assign weights
+%to the objects, with the weights roughly corresponding to the
+%quality of the observed object.   The weights would
+%be multiplied by the rows of both \Xk[] and \yk[], and used in both the
+%calibration and test phases.  Starting from \algref{oddpls}, I believe this
+%could be achieved simply.  In this formulation, it seems one should minimize
+%the approximated \BIC{} as described in \secref{objfun}, but with $\ro$
+%approximated by a \mrpq{} function applied to the object weighting vector.
+%Minimization of the approximate \BIC{} favors a larger approximate $\ro,$ which
+%would prevent the number of large weighted (\ie ``important'') objects from
+%becoming too small.  By optimizing on object and predictor weights
+%simultaneously, it is possible that one could simultaneously identify
+%uninformative variables and outlier objects.
+
+%One may be able to find a better initial estimate of the Hessian of the
+%\RMSECV{} to give to the BFGS algorithm.  The numerical estimate which requires
+%\bigtheta{\cl} evaluations of the gradient is probably unwarranted, as the
+%optimization of \vlam usually does not require that many major iterates.
+%However, there may be some quickly computable approximation, \eg by a diagonal
+%matrix, to the Hessian which works well in practice.
+
+I would be interested in an analysis of the structure of the
+\RMSECV{} and embedded \aBIC objective functions.  For example, can either be shown 
+to be convex (in \vlam) in general, or under assumptions on the data \Xk[]
+and \yk[] which are justifiable in the chemometric context?  Moreover, can one
+find sufficient sizes for the CV groupings to sufficiently reduce dependence of the
+objective on the groupings? Will a sufficiently designed CV grouping make the
+objective function convex or nearly so?
+%An easy
+%rejection of convexity would follow from finding multiple local minima of the
+%function, perhaps by starting the BFGS algorithm from different initial
+%iterates.  Such experiments might also shed light on good heuristics for
+%determining the initial iterates.
+
+The choice of CV groupings affects both the ``quality'' of the RMSECV measure
+(\ie how accurately it rates subsets of channels) and the runtime of \SRCEK{}.
+Shao's Monte Carlo scheme, using $2\ro$ groupings of $\ro^p$ objects in the
+calibration group, and the remainder in the test group, results in a total
+runtime of \bigo{\ro\Parens{\ro^{2p}\cl(\fc-1) +
+\ro^{p+1}\cl}} flops for the computation of the gradient of \RMSECV.  Thus I would
+be interested to discover an acceptable lower bound on $p$ which gives
+acceptable quality of \RMSECV.
+
+The iterates of the BFGS algorithm for this objective function often display a
+zigzagging behaviour towards the minimum.  Often this is the result of some
+elements of \vlam ``overshooting'' zero.  It would be interesting to see if
+this can be avoided by using other minimization techniques, for example the 
+conjugate gradient method, or a proper constrained minimization implementation
+of BFGS.  \cite{nocedal91theory}
+%My initial attempt to fix the problem was to ensure the elements of \vlam were
+%positive by letting $\vlam = \exp{\vxi}$ and minimizing with respect to \vxi.
+%This requires only minimal modification of the objective function and gradient,
+%but the results were numerically unstable.  This leads me to believe that
+%normalization of vectors in the PLS computation is indeed important, and should
+%somehow be reintroduced into \algref{fullonpls}.
+
+Finally, the \SRCEK{} method as described in this paper has many tweakable
+parameters: initial iterate \vlamk[0], initial approximation of the Hessian,
+termination condition for BFGS, choice of objective function, $p$ and $q$ for
+the continuous embedding of number of estimated parameters, \etc  While these
+provide many possibilities to the researcher of the technique, they are an
+obstacle for the end user.  Thus reasonable heuristics for setting these
+parameters which work well in a wide range of settings would be welcome.
+%UNFOLD
+
+%\input{chapter.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FOLDUP
+% emphasized equation or align.
+%\begin{empheq}[innerbox=\widefbox]{equation}
+%%\begin{empheq}[innerbox=\widefbox]{align}
+%\begin{split}
+%n_{n+1} 			&\gets r_{n+1} n_n + q_{n+1},\\
+%\vul{s}{x}{1,n+1} 		&\gets r_{n+1} \vul{s}{x}{1,n} + q_{n+1} x_{n+1},\\
+%\vul{\chi}{x,y}{n+1} 	&\gets r_{n+1} \vul{\chi}{x,y}{n} + q_{n+1} x_{n+1}y_{n+1}.
+%\end{split}
+%\label{eqn:IIRupdates}
+%\end{empheq}
+%\begin{hwexercise}\label{ex:pOne}
+%\end{hwexercise}
+%\begin{hwproblem}\label{ex:pOne}
+%\end{hwproblem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  an algorithm
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\usepackage{alg}
+%\begin{algorithm}[h]
+%\caption{Algorithm for killing a visible simplex.\label{alg:RealCoarseKillVisible}}
+%\alginout{A point visible to the simplex, the simplex, the polytope it is
+%embedded in, the dimension of the polytope, the PLS and HSS}{the updated HSS}
+%\algname{killVisible}{$p, S, poly, l, PLS, \mathcal{H}$}
+%\begin{algtab}
+%	Start ripping out the Delaunay cavity for $p$:\\
+%
+%	Form tent panels to the boundary.  For each tent panel created (a tent panel
+%	is an $l$-simplex from $p$ to a boundary face), check all of its
+%	$k$-subsimplices:  if a $k$-subsimplex is present in \sset[k], and is
+%	encroached by some vertex of the tent panel throw an {\tt Obstruction} error
+%	in the form of the simplex and its circumcenter.  Note that this includes
+%	checking if $p$ encroaches on simplices on the Delaunay cavity
+%	boundary.\label{algstep:KVmakeTentPanel}\\
+%
+%\algwhile{the conflict queue, $\ConfQrep$, is nonempty}
+%  If the next conflict is a queued point, let $p$ be the point to be added to
+%	the triangulation of polytope \ptope, and is visible to simplex $S$;
+%	otherwise let $S$ be the Ruppert simplex to be removed from the triangulation
+%	of \ptope, and let $p$ be its circumcenter.\\
+%	Insert $p$, killing $S$, by a call to $\mathtt{killVisible}$, updating
+%	$\mathcal{H}$.\\
+%	\algif{an error is returned in the form of an obstruction, which is a
+%	$k$-simplex $S'$, for $1\le k < l$}
+%		Add $S'$ to the Ruppert simplices of the $k$-polytope associated with it.
+%		If $p$ was a queued point, return it to \ConfQrep, otherwise if the Ruppert
+%		simplex $S$ is still in \sset, return it to \ConfQrep.\\
+%	\algelse
+%		If $S$ was a Ruppert simplex, add $p$ to the point queue for every polytope
+%		containing \ptope.\\
+%	\algend
+%\algend %while
+%
+%\algreturn $\mathcal{H}$
+%\end{algtab}
+%\end{algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  a table
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{table}[h]
+%\begin{center}
+%\begin{tabular}{|c|cccccc|}
+%\hline
+%SNR & 4000 & 400 & 40 & 4 & 0.4 & 0.04 \\
+%$r^2$ & 1.0 & 0.998 & 0.981 & 0.837 & 0.335 & 0.238 \\
+%\hline
+%\end{tabular}
+%\end{center}
+%\caption{caption}\label{tab:atable}
+%\end{table}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  begin figures
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{figure}[htb!]%monofigure%FOLDUP
+%\centering
+%	\psfrag{a}{$a$}
+%	\includegraphics[width=.35\columnwidth]{wsel.eps}
+%\caption{some caption.}\label{fig:wsel}
+%\end{figure}%UNFOLD
+%\begin{figure}[htb!]%subfigure%FOLDUP
+%\centering
+%\subfigure[a]{
+%		\label{fig:wsela}
+%		\psfrag{a}{$a$}
+%		\includegraphics[width=.35\columnwidth]{wsela.eps}}
+%\hspace{.3in}
+%\subfigure[b]{
+%		\label{fig:wselb}
+%		\psfrag{a}{$a$}
+%		\includegraphics[width=.35\columnwidth]{wselb.eps}}
+%\caption{some caption.}
+%\end{figure}%UNFOLD
+%
+%%\usepackage{subfigure}
+%\begin{figure}[htp]
+%\centering
+%\subfigure[subfig caption 1]{
+%		\label{fig:subfiga}
+%		\psfrag{a}{$a$}
+%		\psfrag{b}{$b$}
+%		\includegraphics[width=.45\columnwidth]{\figDIR/wsel1\useBW.eps}}
+%\hspace{.3in}
+%\subfigure[subfig caption 2]{
+%		\label{fig:subfigb}
+%		\psfrag{a}{$a$}
+%		\psfrag{b}{$b$}
+%		\includegraphics[width=.45\columnwidth]{\figDIR/wsel2\useBW.eps}}
+%\vspace{.3in}
+%\subfigure[subfig caption 3]{
+%		\label{fig:subfigc}
+%		\psfrag{a}{$a$}
+%		\psfrag{b}{$b$}
+%		\includegraphics[width=.45\columnwidth]{\figDIR/wsel3\useBW.eps}}
+%\hspace{.3in}
+%\subfigure[subfig caption 4]{
+%		\label{fig:subfigd}
+%		\psfrag{a}{$a$}
+%		\psfrag{b}{$b$}
+%		\includegraphics[width=.45\columnwidth]{\figDIR/wsel4\useBW.eps}}
+%\caption{multiple figure caption} \label{fig:multiwsel}
+%\end{figure}
+%
+%OLD:
+%%\usepackage{subfigure}
+%\begin{figure}[i]
+%\caption{a caption} \label{fig:bFig}
+%\begin{center}
+%	\hbox{
+%\subfigure[one]{ \psfig{figure=wsel1.eps,width=.3\columnwidth} }
+%\subfigure[two]{ \psfig{figure=wsel2.eps,width=.3\columnwidth} }
+%	}
+%\end{center}
+%\end{figure}
+%
+%\begin{figure}[h]
+%\centering
+%\caption{a caption.}\label{fig:aFig}
+%	\psfig{figure=wsel.ps,width=0.5\columnwidth}
+%\end{figure}
+%
+%\begin{figure}[h]
+%\caption{a caption.}\label{fig:aFig}
+%\begin{center}
+%	\qquad \psfig{figure=wsel.ps,width=0.5\columnwidth}
+%\end{center}
+%\end{figure}
+%
+%%\usepackage{graphicx,epsfig,psfrag}
+%\begin{figure}
+%\begin{center}
+%\psfrag{a}{$a$}
+%\includegraphics[width=0.5\columnwidth,angle=270,clip=]{wsel.eps}
+%\end{center}
+%\caption{a caption} \label{fig:cFig}
+%\end{figure}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  end figures
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%UNFOLD
+
+%\bibliographystyle{plain}
+\bibliographystyle{sepbib}
+\bibliography{wsel}
+%\bibliography{sepbiblio}
+\pagebreak
+\appendix
+
+\section{A Brief Review of Vector Calculus}\label{sec:bguide}%FOLDUP
+
+The vector calculus appearing in this paper is not difficult, it is merely
+involved.  To follow the derivations one need only have a good
+understanding of basic linear algebra and a fondness for the product derivative rule.
+
+First the gradient and Jacobian:  given a scalar function $f(\vlam)$, its
+gradient is the vector $\glam[f]$ whose \kth{j} element is the partial derivative of 
+$f$ with respect to \lame{j}, that is \prbypr{f}{\lame{j}}.
+Given a vector valued function $\vect{f}(\vlam)$ which outputs an
+$l$-dimensional vector when given the $m$-dimensional vector \vlam as input,
+its Jacobian is an $l\cross m$ matrix whose \kth{(i,j)} element is the partial
+derivative of the \kth{i} component of \vect{f} with respect to \lame{j}, that
+is
+\[\Parens{\dlam{\vect{f}}}_{i,j} = \prbypr{f_i}{\lame{j}}.\]
+
+Remarkably we need nothing more exotic than this.  Some convenient rules to
+fill our toolbox:
+\begin{compactenum}
+%%%%%%%%%%%%%
+\item The gradient product rule: given functions $f$ and $g$ we have
+\begin{equation}
+\glam\Parens{fg} = f\glam{g} + g\glam{f}.
+\label{eqn:gprodrule}
+\end{equation}
+This follows because the \kth{j} element of \glam[\Parens{fg}] is the partial of
+$fg$ with respect to \lame{j}.  Using the scalar product rule we have
+$\prbypr{fg}{\lame{j}} = f\prbypr{g}{\lame{j}} + g \prbypr{f}{\lame{j}},$
+from which our rule follows.
+
+%\item 
+The gradient quotient rule follows in a similar fashion: for given $f$ and $g$:
+\begin{equation}
+\glam\Parens{f/g} = \frac{g\glam{f} - f\glam{g}}{g^2}.
+\label{eqn:gquotrule}
+\end{equation}
+
+The gradient dot-product rule is similar; given vectors \vect{v} and \vect{w}
+we have
+\begin{equation}
+\glam\Parens{\ip{\vect{v}}{\vect{w}}} = \trans{\dlam{\vect{v}}}\vect{w} +
+\trans{\dlam{\vect{w}}}\vect{v}.
+\label{eqn:gdprodrule}
+\end{equation}
+
+%%%%%%%%%%%%%
+\item The Jacobian scales: given a constant matrix \Mtx{M} and a vector-valued function
+\vect{f} we have
+\begin{equation}
+\dlam{\Mtx{M}\vect{f}} = \Mtx{M}\dlam{\vect{f}}.
+\label{eqn:jprodrule}
+\end{equation}
+This follows from the linearity of the matrix product and the derivative:
+\[\Parens{\dlam{\Mtx{M}\vect{f}}}_{i,j} 
+= \prbypr{\Parens{\Mtx{M}\vect{f}}_{i}}{\lame{j}}
+= \prbypr{\sum_k M_{i,k} f_k}{\lame{j}}
+= \sum_k M_{i,k} \prbypr{f_k}{\lame{j}}
+= \sum_k M_{i,k} \Parens{\dlam{\vect{f}}}_{k,j}
+= \Parens{M \dlam{\vect{f}}}_{i,j}
+\]
+%%%%%%%%%%%%%
+\item The diagonal rule: given vector-valued function \vect{f}, and letting
+$\LAMk{p} = \Parens{\diag{\vlam}}^p$ then
+\begin{equation}
+\dlam{\LAMk{p}\vect{f}} = p\LAMk{p-1}\diag{\vect{f}} + \LAMk{p} \dlam{\vect{f}}.
+\label{eqn:diagrule}
+\end{equation}
+Again the proof is trivial:
+\begin{align*}
+\Parens{\dlam{\LAMk{p}\vect{f}}}_{i,j} 
+&= \prbypr{\Parens{\LAMk{p}\vect{f}}_{i}}{\lame{j}}
+= \prbypr{\sum_k \Parens{\LAMk{p}}_{i,k} f_k}{\lame{j}}
+= \prbypr{\lamex{p}{i} f_i}{\lame{j}}\\
+&= \lamex{p}{i} \prbypr{f_i}{\lame{j}} + f_i \prbypr{\lamex{p}{i}}{\lame{j}}
+= \lamex{p}{i} \Parens{\dlam{\vect{f}}}_{i,j} + f_i p\lamex{p-1}{i}\kron{i,j}\\
+&= \Parens{\LAMk{p} \dlam{\vect{f}}}_{i,j} + \Parens{p\LAMk{p-1}\diag{\vect{f}}}_{i,j}.
+\end{align*}
+We have used \kron{i,j} to be the Kronecker delta, which is one if $i=j$ and
+zero otherwise.
+
+%%%%%%%%%%%%%
+\item The product rule for Jacobians: given scalar function $f$ and vector
+function \vect{g}, we have
+\begin{equation}
+\dlam{\Parens{f\vect{g}}} = f \dlam{\vect{g}} + \vect{g}\trans{\Parens{\glam[f]}}.
+\end{equation}
+The proof is similar to above.
+
+%%%%%%%%%%%%%
+\item A useful composite rule; given vectors \vect{v} and \vect{w} and matrix
+\Mtx{M}, then
+\begin{equation}
+\dlam{\Parens{\trans{\vect{v}}\Mtx{M}\LAMk{p}\trans{\Mtx{M}}\vect{w}}} = 
+\trans{\dlam{\vect{v}}}\Mtx{M}\LAMk{p}\trans{\Mtx{M}}\vect{w} + 
+p\, \diag{\trans{\Mtx{M}}\vect{w}}\LAMk{p-1}\trans{\Mtx{M}}\vect{v} +
+\trans{\dlam{\vect{w}}} \Mtx{M}\LAMk{p}\trans{\Mtx{M}}\vect{v}.
+\end{equation}
+This rule follows from application of the dot-product and diagonal rules given
+above.
+
+
+\end{compactenum}
+%UNFOLD
+
+\section{Code}\label{sec:code}%FOLDUP
+I present Matlab\textsuperscript{\textsc{tm}}{} compatible code for computing
+the preimage of the PLS regression coefficient and its Jacobian on the
+following page.  This code is merely a realization of \algref{fullonpls}.
+The code was tested in GNU Octave, and used to produce some of the results depicted
+in \figvref{comprtimes}.
+\pagebreak
+
+\begin{verbatim}
+function [alpha,dalpha,b0,db0]	= fastpreplsandjacobian(X,y,lambda,gam,l)
+% [alpha,dalpha,b0,db0]	= fastpreplsandjacobian(X,y,lambda,gam,l)
+%
+% code to compute the preimage of the l-factor PLS regression coefficient 
+% to fit the model y \approx X diag(lambda) diag(lambda) X' alpha
+% also computes the jacobian of the preimage alpha with respect to lambda.
+% and the intercept and its gradient wrt lambda.
+%
+% input:
+%  X        an m by n matrix.             y    an m by 1 vector.
+%  lambda   n vec prdctr weights.       gam    an m vec objct weights.
+%  l        the number of pls factors.
+% output:
+%  alpha    a m by 1 vector of the regression coefficients.
+%  dalpha   a m by n matrix of the Jacobian of beta wrt lambda.
+%  b0       the scalar intercept (centers data)
+%  db0      the gradient of same.
+% nb: assumes m << n
+% Author: Steven Pav % Created: 2006.04.11 % Copyright 2006
+% sanity checking:
+[m,n] = size(X);lambda = lambda(:);gam = gam(:);y = y(:);
+if ((rows(y) != m) || (length(lambda) != n) || (length(gam) !=m)) 
+  error('size mismatch.'); end
+%allocate storage
+V  = zeros(m,l);dV = zeros(m,n,l-1);w = zeros(l,1);dw = zeros(l,n);
+q  = zeros(l+1,1);dq = zeros(l+1,n);
+%used so much we compute once and store.
+Xlam = X * diags(lambda);XLXg = Xlam * Xlam' * diag(gam); %nm^2 hit.
+T0 = Tk = ones(m,1);dTk = zeros(m,n);Vk = y;dVk = zeros(m,n);
+t0 = sum(gam);
+for k=0:l
+  rk = y' * (gam .* Tk);  drk = dTk' * (gam .* y);
+  tk = Tk' * (gam .* Tk); dtk = 2 * dTk' * (gam .* Tk);
+  q(k+1) = rk/tk; dq(k+1,:) = (drk - q(k+1) * dtk)' / tk;
+  if (k < l)
+    Vk = Vk - q(k+1) * Tk;V(:,k+1) = Vk;
+    dV(:,:,k+1) = (dVk = dVk - q(k+1)*dTk - Tk * dq(k+1,:));
+    Qk = XLXg * Vk;dQk = XLXg * dVk + 2 * Xlam * diag(X' * (gam .* Vk));
+    Uk = Qk .- (gam' * Qk / t0);dUk = dQk - T0 * (gam' * dQk / t0);
+    w(k+1) = Tk' * (gam .* Uk) / tk;
+    dw(k+1,:)  = (dTk' * (gam .* Uk) + dUk' * (gam .* Tk) - w(k+1) .* dtk)' / tk;
+    dTk = dUk - w(k+1) * dTk - Tk * dw(k+1,:);
+    Tk = Uk - w(k+1) * Tk;
+  end
+end
+
+%now compute M\q and its jacobian
+iMq = zeros(l,1);diMq = zeros(l,n);
+iMq(l) = q(l+1);diMq(l,:) = dq(l+1,:);
+
+for k=(l-1):-1:1
+  iMq(k)    = q(k+1) - w(k+1) * iMq(k+1);
+  diMq(k,:) = dq(k+1,:) - (w(k+1) .* diMq(k+1,:) + iMq(k+1) .* dw(k+1,:));
+end
+
+%now compute VM\q and its jacobian
+alpha = V * iMq;dalpha = V * diMq;      %+ more stuff:
+%ack! no tensor product in octave/Matlab :(
+for k=2:l    dalpha  += iMq(k) .* dV(:,:,k); end %dV(:,:,1) is all zeros?
+
+%now the intercept
+b0  = gam' * (y - XLXg * alpha) ./ sum(gam);
+db0 = - (XLXg * dalpha + 2 * Xlam * diag(X' * (gam .* alpha)))' * gam ./ sum(gam);
+
+endfunction
+\end{verbatim}
+%Xalph = X' * alpha;beta = lambda .* Xalph;dbeta = diag(Xalph) + Xlam' * dalpha;
+
+%UNFOLD
+%\input{allcode}
+\end{document}
+%attic%FOLDUP
+%
+%
+%
+%Suppose that \Xc and \yc are given centered matrix and vector, and that \vlam
+%is known.  The computation of the $l$ coefficient PLS regression vector \regb
+%proceeds as in \algref{plsalg}.
+%
+%\begin{algorithm}[htb!]%FOLDUP
+%\caption{Algorithm for computing the PLS regression vector.\label{alg:plsalg}}
+%\alginout{Centered matrix and vector, the predictor scaling vector, and number of
+%coefficients}{the regression vector}
+%\algname{PLS}{$\Xc, \yc, \vlam, l$}
+%\begin{algtab}
+%	Let $\Xk[1] \gets \Xc,$ and $\yk[1] \gets \yc$.\\
+%	\algforto{$k=1$}{$l$}
+%		$\Wk \gets \LAM \trans{{\Xk}}\yk.$\\
+%		$\Tk \gets \Xk \LAM \Wk.$\\
+%		$\tk \gets \trans{\Tk}\Tk.$\\
+%		%??
+%		%$\Pk \gets \trans{{\Xk}} \Tk / \tk.$\\
+%		$\Pk \gets \LAM \trans{{\Xk}} \Tk / \tk.$\\
+%		$\qk \gets \trans{{\yk}} \Tk / \tk.$\\
+%	\label{algstep:PLSupX}
+%		$\Xk[k+1] \gets \Xk - \Tk \trans{\Pk} \invs{\LAM}.$\\
+%	\label{algstep:PLSupy}
+%		$\yk[k+1] \gets \yk - \Tk q_k.$\\
+%	\algend
+%	Let \Mtx{\Wsym} be the matrix with columns $\Wk[{\onetox{l}}].$  Similarly
+%	define \Mtx{\Psym}, \vect{q}.\\
+%	$\regb \gets \Mtx{\Wsym} \invs{\Parens{\trans{\Mtx{\Psym}}\Mtx{\Wsym}}} \vect{q}.$
+%	\label{algstep:KVmakeTentPanel}\\
+%\algreturn \regb
+%\end{algtab}
+%\end{algorithm}%UNFOLD
+%
+%Using \eqnref{zlbjac}, and noting that 
+%$\Wk[1] = \Mtx{I} \LAM \Parens{\trans{{\Xk[1]}}\yk[1]},$ we have
+%\[\jacb{\Wk[1]}{\vlam} 
+%= \Mtx{I} \Parens{\diag{\trans{{\Xk[1]}}\yk[1]} + \LAM
+%\jacb{\trans{{\Xk[1]}}\yk[1]}{\vlam}} 
+%%= \Parens{\invs{\LAM} \diag{\Wk[1]} + \LAM
+%%\jacb{\trans{{\Xk[1]}}\yc}{\vlam}} 
+%= \invs{\LAM} \diag{\Wk[1]} 
+%\]
+%
+%Using \eqnref{zlbjac}, we have
+%\[\jacb{\Tk[1]}{\vlam} = \Xk[1] \Parens{\diag{\Wk[1]} + \LAM
+%\jacb{\Wk[1]}{\vlam}} = 2 \Xk[1] \diag{\Wk[1]}.
+%\]
+%
+%Now note that since $t_1 = \trans{\Tk[1]}\Tk[1],$ we have
+%$\glam[t_1] = 2 \trans{\jacb{\Tk[1]}{\vlam}}\Tk[1].$
+%
+%Note that $\Xk[2] \gets \Xk[1] - \Tk[1] \trans{\Pk[1]} = 
+%\Parens{\Mtx{I} - \LAM\Wk[1] \Wk[1] \LAM /t}\Xk[1].$
+%
+%Note that by \algstepref{PLSupX}, we have
+%%\begin{align*}
+%\[
+%\Xk[k+1] = \Xk - \Tk \trans{\Pk}\invs{\LAM}
+%= \Xk - \Tk \trans{\Tk}\Xk\LAM \invs{\LAM} / \tk
+%= \Parens{\Mtx{I} - \Tk \trans{\Tk}/\tk}\Xk
+%\]
+%%\end{align*}
+%Defining $\Mk = \Mtx{I} - \Tk \trans{\Tk}/\tk,$ note that \Mk is idempotent.
+%That is, $\Mk\Mk = \Mk.$
+%Moreover, by \algstepref{PLSupX}, we can rewrite the update of \yk as
+%$\yk[k+1] = \Mk \yk.$
+%%UNFOLD
+%Let \meen{\Mtx{A}} be the mean of a matrix, \ie the row vector%FOLDUP
+%\(\frac{\wun{}\trans{\wun{}}}{\trans{\wun{}}\wun{}}\Mtx{A},\)
+%and let $\cntr{\Mtx{A}} = \Mtx{A} - \wun{}\meen{\Mtx{A}}$ be the centered
+%version of \Mtx{A}.  If \vect{v} is a vector, let \diag{\vect{v}} be the
+%diagonal matrix whose diagonal is \vect{v}.
+%
+%Given calibration data, \Xcal, \ycal, and test data \Xtst, \ytst, and a predictor
+%weighting vector \vlam, the PLS method constructs a vector \regb and offset
+%\rego.  Let $\LAM = \diag{\vlam}$.  The PLS method is calibrated on
+%$\cntr{\Xcal}\LAM$ and $\cntr{\ycal}$, giving the vector \regb.  The offset
+%\rego is computed as 
+%\[\rego = \meen{\ycal} - \meen{\Xcal}\LAM\regb.\]
+%
+%From this, the regression is tested against the test data.  The quality of the
+%predictor weighting is given by the norm of the residual:
+%\[\resd = \ytst - \Parens{\cntr{\Xtst}\LAM\regb + \wunt \rego}.\]
+%The norm of the residual is 
+%\(\phi = \sqrt{\trans{\resd}\resd}.\)
+%The object of this note is to approximate \glam[\phi].
+%
+%From simple calculus we have at once that
+%\[\glam[\phi] = \oneby{\phi} \trans{\jacb{\resd}{\vlam}} \resd.\]
+%Expanding the residual we have
+%\begin{align*}
+%\resd &= \ytst - \wunt \meen{\ycal} - \Bracks{\cntr{\Xtst}\LAM\regb - \wunt
+%\meen{\Xcal}\LAM\regb},\\
+%&= \ytst - \wunt \meen{\ycal} + \Bracks{\wunt \meen{\Xcal} - \cntr{\Xtst}}\LAM\regb
+%\end{align*}
+%
+%Let \Mtx{Z} be a matrix which is constant with respect to \vlam.  
+%Then if \(\vect{f} = \Mtx{Z} \LAM \regb,\) we can compute the Jacobian as
+%%Then vector calculus gives the following Jacobian calculation:
+%%\[\vect{f} = \Mtx{Z} \LAM \regb,\]
+%%the Jacobian of \vect{f} is
+%%\[\jacb{\vect{f}}{\vlam} = \Mtx{Z} \Parens{\Mtx{B} + \LAM \jacb{\regb}{\vlam}},\]
+%\begin{equation}
+%%\vect{f} = \Mtx{Z} \LAM \regb \Rightarrow 
+%\jacb{\vect{f}}{\vlam} = \Mtx{Z} \Parens{\Mtx{B} + \LAM \jacb{\regb}{\vlam}},
+%\label{eqn:zlbjac}
+%\end{equation}
+%where $\Mtx{B} = \diag{\regb}$.
+%
+%Thus
+%\[\jacb{\resd}{\vlam} = 
+%\Bracks{\wunt \meen{\Xcal} - \cntr{\Xtst}}
+%\Parens{\Mtx{B} + \LAM \jacb{\regb}{\vlam}},\]
+%Then
+%\[
+%\glam[\phi] = \oneby{\phi} 
+%	\trans{\Parens{\Mtx{B} + \LAM \jacb{\regb}{\vlam}}}
+%	\trans{\Bracks{\wunt \meen{\Xcal} - \cntr{\Xtst}}}
+%	\resd.\]
+%%\begin{align*}
+%%\glam[\phi] &= \oneby{\phi} 
+%%	\trans{\Parens{\Mtx{B} + \LAM \jacb{\regb}{\vlam}}}
+%%	\trans{\Bracks{\wunt \meen{\Xcal} - \cntr{\Xtst}}}
+%%	\resd.\\
+%% &= \oneby{\phi} 
+%%	\Parens{\Mtx{B} + \trans{\jacb{\regb}{\vlam}} \LAM}
+%%	\trans{\Bracks{\wunt \meen{\Xcal} - \cntr{\Xtst}}}
+%%	\resd.\\
+%% &= \oneby{\phi} 
+%%	\Parens{\Mtx{B}\invs{\LAM} + \trans{\jacb{\regb}{\vlam}}} \LAM
+%%	\trans{\Bracks{\wunt \meen{\Xcal} - \cntr{\Xtst}}}
+%%	\resd.\\
+%% &= \oneby{\phi} 
+%%	\Parens{\Mtx{B}\invs{\LAM} + \trans{\jacb{\vect{b}}{\vlam}}} 
+%%	\trans{\Bracks{\wunt \meen{\Xcal} \LAM - \cntr{\Xtst}\LAM}}
+%%	\resd.\\
+%%\end{align*}
+%
+%This reduces the problem to that of finding \jacb{\regb}{\vlam},
+%the Jacobian of the PLS regression coefficient with respect to \vlam.
+%Note that the PLS method is fed predictors 
+%$\cntr{\Xcal}\LAM$ and responses $\cntr{\ycal}$, and thus is a function of
+%\vlam.
+%%UNFOLD
+%\begin{algorithm}[htb!]%FOLDUP
+%\caption{Algorithm for performing the back substitution and computing the Jacobian.\label{alg:endgame}}
+%\alginout{The scores (FIX) matrix, the upper diagonal elements of the matrix to
+%be inverted, the scores (FIX) vector, and the derivatives of these.
+%}{the regression vector and its Jacobian}
+%\algname{BackSubstution}{$\Mtx{\Wsym}, \setBIdx{\Mij{j}{j+1}}{j=1}{l-1},
+%\setBIdx{\glam{\Mij{j}{j+1}}}{j=1}{l-1},
+%\setBIdx{\dlam{\Wk[j]}}{j=1}{l}, \vect{\qk[]}, \dlam{\vect{\qk[]}}$}
+%\begin{algtab}
+%	$u_l \gets \qk[l]$, $\glam{u_l} \gets \glam{\qk[l]}$.\\
+%	\algforto{$j=l-1$}{$1$}
+%		$u_j \gets \qk[j] - \Mij{j}{j+1} u_{j+1}$.\\
+%		$\glam{u_j} \gets \glam{\qk[j]} - \Mij{j}{j+1} \glam{u_{j+1}} - u_{j+1}
+%		\glam{\Mij{j}{j+1}}$.\\
+%	\algend
+%	$\regb \gets \Mtx{\Wsym} \vect{u}.$\\
+%	$\dregb \gets \Mtx{\Wsym} \dlam{\vect{u}}.$\\
+%	\algforto{$j=1$}{$l$}
+%		$\dregb \gets \dregb + u_j \dlam{\Wk[j]}.$\\
+%	\algend
+%\algreturn \tuple{\regb,\dregb}
+%\end{algtab}
+%\end{algorithm}%UNFOLD
+%\section{Standard Properties of the PLS Algorithm}\label{sec:plsproofs}%FOLDUP
+%
+%\begin{lemma}\label{lem:vplspropsAGAIN}%FOLDUP
+%Let \Xk, \Wk, \Tk, and \Pk be as in \algref{vanillapls}.  Then
+%the following hold for all $k$:
+%\begin{compactenum}
+%\item $\ip{\Wk}{\Pk} = 1$.
+%\label{item:wkpk}
+%\item $\Xk[k+l]\Wk = \vz$ for all $l \ge 1.$
+%\label{item:xwk}
+%\item $\ip{\Wk[k+l]}{\Wk} = 0$ and $\ip{\Pk[k+l]}{\Wk} = 0$ for all $l \ge 1.$
+%\label{item:wkwk}
+%\item $\trans{\Xk[k+l]}\Tk = \vz$ for all $l \ge 1.$
+%\label{item:xtk}
+%\item $\ip{\Tk[k+l]}{\Tk} = 0$ for all $l \ge 1.$
+%\label{item:tktk}
+%\item $\ip{\Pk[k+l]}{\Pk} = 0$ for all $l > 1.$  (Note the strict inequality
+%for $l$.)
+%\label{item:pkpk}
+%\end{compactenum}
+%\end{lemma}%UNFOLD
+%\begin{proof}%FOLDUP
+%First note that the update of \Xk is given by 
+%\[\Xk[k+1] = \Xk - \Tk \trans{\Pk} =
+%\Parens{\Mtx{I} - \frac{\Tk\trans{\Tk}}{\tk}} \Xk = \Mk\Xk.\]
+%It can also be expressed as 
+%\[\Xk[k+1] = \Xk - \Tk \trans{\Pk} = \Xk \Parens{\Mtx{I} - \Wk\trans{\Pk}} =
+%\Xk\Lk.\]
+%Now the parts of the lemma:
+%\begin{compactenum}
+%%%%%%%%%%%%%%%
+%\item[\bf \ref{item:wkpk}]%
+%\[\ip{\Wk}{\Pk} = \frac{\trans{\Wk}\trans{\Xk}\Tk}{\tk} =
+%\frac{\trans{\Tk}{\Tk}}{\tk} = \frac{\tk}{\tk} = 1.\]
+%%%%%%%%%%%%%%%
+%\item[\bf \ref{item:xwk}] 
+%First I prove $\Xk[k+1]\Wk = \vz$ as follows:
+%\begin{align*}
+%\Xk[k+1]\Wk &= \Xk \Parens{\Mtx{I} - \Wk\trans{\Pk}}\Wk\\
+%&=\Xk \Parens{\Wk - \Wk \ip{\Pk}{\Wk}} = \Xk \Parens{\Wk - \Wk} = \vz,
+%\end{align*} which follows because
+%$\ip{\Pk}{\Wk} = 1$
+%To prove for general $l,$ we note that 
+%$\Xk[k+l] = \Mk[k+l-1]\Xk[k+l-1] = \Mk[k+l-1]\Mk[k+l-2]\Xk[k+l-2] = \ldots =
+%\Mtx{M} \Xk[k+1]$, so 
+%$\Xk[k+l]\Wk = \Mtx{M}\Xk[k+1]\Wk = \Mtx{M}\vz = \vz.$
+%%%%%%%%%%%%%%%
+%\item[\ref{item:wkwk}] This is trivial because, for example, 
+%$\ip{\Wk[k+l]}{\Wk} = \trans{\yk[]}\Xk[k+l]\Wk = \trans{\yk[]}\vz$ following
+%from the previous part.  Similarly for \ip{\Pk[k+l]}{\Wk}.
+%%%%%%%%%%%%%%%
+%\item[\ref{item:xtk}] Again I prove for $l=1$ first:
+%\begin{align*}
+%\trans{\Xk[k+1]}\Tk &= \trans{\Xk} \trans{\Parens{\Mtx{I} -
+%\frac{\Tk\trans{\Tk}}{\tk}}}\Tk 
+%= \trans{\Xk} \Parens{\Tk - \frac{\Tk\trans{\Tk}\Tk}{\tk}}\\
+%&= \trans{\Xk} \Parens{\Tk - \frac{\Tk\tk}{\tk}}
+%= \trans{\Xk} \Parens{\Tk - \Tk} = \vz.
+%\end{align*}
+%Similarly to above we can prove for $l > 1$ by writing $\Xk[k+l] = \Xk[k+1]\Mtx{L}$.
+%%%%%%%%%%%%%%%
+%\item[\bf \ref{item:tktk}] As above $\ip{\Tk[k+l]}{\Tk} =
+%\trans{\Wk[k+l]}\trans{\Xk[k+l]}\Tk = 
+%\trans{\Wk[k+l]}\vz = 0$ by the previous result.
+%%%%%%%%%%%%%%%
+%\item[\bf \ref{item:pkpk}] 
+%This part is more challenging to remember.  First use \itemref{wkwk} to assert
+%$0 = \ip{\Pk[k+l]}{\Wk[k+1]},$ then rewrite \Xk[k+1] in \Wk[k+1]:
+%\begin{align*}
+%0 &= \ip{\Pk[k+l]}{\Wk[k+1]} 
+%= \ip{\Pk[k+l]}{\Bracks{\trans{\Parens{\Xk - \Tk\trans{\Pk}}} \yk[]}}\\
+%0 &= \ip{\Pk[k+l]}{\Bracks{\Wk - \Pk\trans{\Tk}\yk[]}}
+%= \ip{\Pk[k+l]}{\Wk} - \ip{\Pk[k+l]}{\Pk\trans{\Tk}\yk[]}\\
+%0 &= 0 - \Parens{\ip{\Pk[k+l]}{\Pk}}\trans{\Tk}\yk[],
+%\end{align*}
+%and thus either $\ip{\Pk[k+l]}{\Pk} = 0$ as desired or 
+%$\trans{\Tk}\yk[] = 0$.  I claim that if the latter holds the algorithm should
+%terminate as the full rank of \Xk[1] is no greater than $k$. I leave it as an
+%exercise for the reader to show that if 
+%$\trans{\Tk}\yk[] = 0$ then $\Wk[k+1] = \Wk[k],$ and that $\Tk[k+1] = \vz,$
+%and thus \tk[k+1], \Pk[k+1] and \Xk[k+2] are undefined and the algorithm breaks
+%down if allowed to continue.
+%\end{compactenum}
+%\end{proof}%UNFOLD
+%%UNFOLD
+%oldOctaveCODE%FOLDUP
+%\begin{verbatim}
+%function [beta,dbeta]  = plsandjacobian(X,y,lambda,l)
+%% [beta,dbeta]  = plsandjacobian(X,y,lambda,l)
+%% code to compute the l-factor PLS regression coefficient to fit
+%% the model y \approx X diag(lambda) beta
+%% also coputes the jacobian of beta with respect to lambda.
+%% input:
+%%  X           an n by m matrix, column centered.
+%%  y           an n by 1 vector, column centered.
+%%  lambda      an m vector of predictor weightings.
+%%  l           the number of pls factors.
+%% output:
+%%  beta        a m by 1 vector of the regression coefficients.
+%%  dbeta       a m by m matrix of the Jacobian of beta wrt lambda.
+%% Author: Steven Pav Created: 2006.03.24  Copyright 2006
+%
+%%sanity checking
+%[n,m]          = size(X);lambda        = lambda(:);
+%if ((rows(y) != n) || (length(lambda) != m)) error('size mismatch.'); end
+%%allocate storage
+%W = zeros(m,l); dW = zeros(m,m,l); q = zeros(l,1); dq = zeros(l,m);
+%Mdiag = zeros(l-1,1); dMdiag = zeros(l-1,m); %upper diagonal of M & gradients
+%Xlam = X * diag(lambda);    %used so much we compute once and store.
+%%initialize
+%u = 0; gu = 0;
+%%first factor
+%W(:,1) = Xlam' * y; dW(:,:,1) = diag(W(:,1) ./ lambda);
+%t = Xlam * W(:,1); dt = X * diag(2 * W(:,1));
+%gamm = t'*t; ggamm = (2 * dt') * t;
+%p = Xlam' * t ./ gamm;
+%dp = diag(p ./ lambda) + (1.0 / gamm) * (Xlam' * dt - p * ggamm');
+%s = p' * p; gs = (2 * dp') * p; r = t'*y; gr = dt'*y;
+%q(1) = r ./ gamm; dq(1,:) = (gr - q(1) * ggamm)' ./ gamm;
+%for k=2:l
+%  W(:,k) = W(:,(k-1)) - r * p;
+%  dW(:,:,k) = dW(:,:,k-1) - (r * dp + p * gr');
+%  %compute current t, don't kill the old yet.
+%  if (k == 2)    %ignore t_0 and dt_0:
+%    new_t = -Xlam * (r * p) + (r * s) * t;
+%    new_dt = -X * diag(r * p) - Xlam * (p * gr' + r * dp) + \
+%             (r*s)*dt + t*(r * gs + s*gr)';
+%  else
+%    new_t = -Xlam * (r * p) + ((r * u) * t_p) + (r * s) * t;
+%    new_dt = -X * diag(r * p) - Xlam * (p * gr' + r * dp) .+ \
+%             (r*u)*dt_p + t_p * (r * gu + u * gr)' .+ (r*s)*dt + \
+%             t*(r * gs + s*gr)';
+%  end
+%  t_p = t;dt_p = dt;t = new_t;dt = new_dt; %update ts, zap old values.
+%  gamm = t'*t; ggamm = (2 * dt') * t;
+%  %compute upper diags of M
+%  Mdiag(k-1) = 1 - r * s; dMdiag(k-1,:) = - (r * gs + s * gr)';
+%  %update r, gradr, but not in that order b/c grad r comp needs old r
+%  gr = - (r * dMdiag(k-1,:)' + Mdiag(k-1) * gr);
+%  r  = - (r * Mdiag(k-1));
+%  %compute current p, dp don't kill the old yet.
+%  new_p  = Xlam' * t / gamm;
+%  new_dp = diag(new_p ./ lambda) + (1.0 / gamm) * (Xlam' * dt - new_p * ggamm');
+%  u = new_p' * p; gu = new_dp' * p + dp' * new_p;
+%  p = new_p;dp = new_dp; %update ps now, zap old values.
+%  %compute s and q:
+%  s  = p'*p;gs  = (2 * dp') * p;
+%  q(k) = r / gamm; dq(k,:) = (gr - q(k) * ggamm)' ./ gamm;
+%end
+%%now compute M\q and its Jacobian
+%iMq = zeros(l,1); diMq = zeros(l,m);
+%iMq(l) = q(l); diMq(l,:) = dq(l,:);
+%for k=(l-1):-1:1
+%  iMq(k)    =  q(k)   -  Mdiag(k) * iMq(k+1);
+%  diMq(k,:) = dq(k,:) - (Mdiag(k) .* diMq(k+1,:) + iMq(k+1) .* dMdiag(k,:));
+%end
+%%now compute WM\q and its Jacobian
+%beta = W * iMq; dbeta = W * diMq; %+ more stuff:
+%%ack! no tensor product in octave/Matlab :(
+%for k=1:l    dbeta    += iMq(k) .* dW(:,:,k); end
+%
+%%endfunction
+%\end{verbatim}
+%%UNFOLD
+%\begin{note}%FOLDUP
+%\label{note:rankcalc}
+%Under the assumption that $\fc < \ro \ll \cl,$  one must be careful in the
+%implementation of \algstepref{calcdt} of \algref{fullonpls}.  If the algorithm
+%is implemented as written, the asymptotic runtime of the algorithm is 
+%\bigo{\fc\ro\cl^2}.  This gives no asymptotic advantage over a numerical
+%approximation to the Jacobian, which can be had by \bigo{\cl} evaluations of
+%the PLS algorithm, each incurring \bigo{\fc\ro\cl} run time\tsidenote{Although
+%the analytic version is usually faster by an order of magnitude than the
+%numeric approximation.}.
+%
+%%The reduced rank of the matrix \Xk[1] can be exploited somewhat by computing
+%The problem with
+%\algstepref{calcdt} 
+%is the multiplication of the $\ro\cross\cl$ matrix \Xk[1]\LAM by the
+%$\cl\cross\cl$ matrix \dlam{\Pk[k-1]}.  This incurs a cost of
+%\bigtheta{\ro\cl^2} for each step for a total cost of 
+%\bigtheta{\fc\ro\cl^2}.  One can exploit the reduced rank of \Xk[1] by 
+%computing $\XLX$ once (at cost \bigo{\ro^2\cl}) and using
+%it throughout the computation.  That is, instead of computing 
+%\[-\Xk[1]\LAM\rk[k-1]\dlam{\Pk[k-1]}\]
+%as stated one should use the definition of \dlam{\Pk[k-1]} and instead compute
+%\[-\qk[k-1]\Xk[1]\LAM\diag{\trans{\Xk[1]}\Tk[k-1]} 
+%- \qk[k-1] \Parens{\XLX} \dlam{\Tk[k-1]} 
+%+ \qk[k-1] \Parens{\Xk[1]\LAM\Pk[k-1]}\trans{\glam{\tk[k-1]}}.\]
+%Note the grouping $\Parens{\Xk[1]\LAM\Pk[k-1]}\trans{\glam{\tk[k-1]}}$, which should be 
+%computed in this order to prevent a runtime hit.  Under this redefinition, the
+%computation of \dlam{\Tk} can be achieved in \bigo{\ro^2\cl} per iteration for
+%a total cost of \bigo{\fc\ro^2\cl}.  
+%The tensor product step (\algstepref{FOfaketensor}) requires \bigtheta{\fc\cl^2}
+%flops, giving a total 
+%
+%When $\ro\ll\cl$ the savings can be
+%immense, 
+%
+%algorithm, giving a runtime upper bound of \bigo{\fc\ro\cl^2}.  The analytic
+%algorithm which follows exploits the reduced rank of \Xk[] to compute the
+%Jacobian in \bigo{\fc\ro^2\cl + \cl^2}.  
+%\end{note}
+%%FIX!!
+%%UNFOLD
+%\begin{algorithm}[htb!]%FOLDUP
+%\caption{Algorithm for computing the PLS regression vector and Jacobian.\label{alg:fullonpls}}
+%\alginout{Predictor and response, predictor weights, number of
+%coefficients}{the regression vector and its Jacobian}
+%\algname{PLSandJacobian}{$\Xk[1], \yk[], \vlam, \fc$}
+%\begin{algtab}
+%%	$\Mij{}{} \gets \Mtx{I}_l,$ the $l\cross l$ identity matrix.\\
+%	$\Tk[0] \gets \vz, \uk[1] \gets 0$,
+%	$\dlam{\Tk[0]} \gets \Mz, \glam{\uk[1]} \gets \vz,$
+%%	Precompute $\XLX$.\\
+%	$\Vk[1] \gets \yk[],$
+%	$\dlam{\Vk[1]} \gets \Mz.$\\
+%
+%	$\Tk[1] \gets \XLX \Vk[1],$
+%	$\dlam{\Tk[1]} \gets 2\Xk[1]\LAM\diag{\trans{\Xk[1]\Vk[1]}}$.\\
+%	$\tk[1] \gets \trans{\Tk[1]}\Tk[1]$, 
+%	$\glam{\tk[1]} \gets 2\trans{\dlam{\Tk[1]}}\Tk[1]$.\\
+%
+%	$\Pk[1] \gets \LAM\trans{\Xk[1]}\Tk[1]/\tk[1]$,
+%	$\sk[1] \gets \trans{\Pk[1]}\Pk[1],$\newline
+%	$\glam{\sk[1]} \gets \tk[1]^{-1}
+%	\Parens{2\Bracks{\diag{\trans{\Xk[1]}\Tk[1]}\Pk[1] +
+%	\trans{\dlam{\Tk[1]}}\Xk[1]\LAM\Pk[1]} - 2 \sk[1]}.$\\
+%	$\rk[1] \gets \trans{{\yk[]}} \Tk[1]$,
+%	$\glam{\rk[1]} \gets \trans{\dlam{\Tk[1]}}\yk[]$.\\
+%
+%	$\qk[1] \gets \rk[1] / \tk[1]$,
+%	$\glam{\qk[1]} \gets \Parens{\tk[1]\glam{\rk[1]} - \rk[1]\glam{\tk[1]}} /
+%	\tk[1]^2$.\\
+%
+%%	\algif{$\rk[1] = 0$}
+%%		Full rank achieved. Let $l = 1$.\\
+%%	\algend
+%%	Let $\Xk[1] \gets \Xc,$ and $\yk[] \gets \yc$.\\
+%	\algforto{$k=2$}{$l$}
+%		$\Vk \gets \Vk[k-1] - \qk[k-1]\Tk[k-1].$\newline
+%		$\dlam{\Vk} \gets \dlam{\Vk[k-1]} - \qk[k-1]\dlam{\Tk[k-1]} -
+%		\Tk[k-1]\trans{\glam{\qk[k-1]}}$.\\
+%		$\Tk \gets - \qk[k-1]\Xk[1]\LAMk2\trans{\Xk[1]} \Tk[k-1] + \rk[k-1]
+%		\uk[k-1] \Tk[k-2] + \rk[k-1] \sk[k-1]\Tk[k-1].$\newline
+%		\(
+%		\dlam\Tk 
+%		%FIX:
+%		 \gets - \Xk[1]\LAMk2\trans{\Xk[1]} \Tk[k-1] \trans{\glam{\qk[k-1]}} + 
+%		 \qk[k-1] \Xk[1] \Parens{2\LAM\diag{\trans{\Xk[1]}\Tk[k-1]} + \LAMk2
+%		 \trans{\Xk[1]}\dlam{\Tk[k-1]}}
+%		 + \rk[k-1] \uk[k-1] \dlam{\Tk[k-2]}
+%		+ \Tk[k-2] \trans{\Bracks{\rk[k-1] \glam{\uk[k-1]} + \uk[k-1] \glam{\rk[k-1]}}}
+%		 + \rk[k-1] \sk[k-1]\dlam{\Tk[k-1]} 
+%		+ \Tk[k-1] \trans{\Bracks{\rk[k-1] \glam{\sk[k-1]} +
+%		\sk[k-1]\glam{\rk[k-1]}}}.
+%		\)
+%		\\
+%		$\tk \gets \trans{\Tk}\Tk$, 
+%		$\glam{\tk} \gets 2\trans{\dlam{\Tk}}\Tk$.\\
+%		$\Mij{k-1}{k} \gets 1 - \rk[k-1] \sk[k-1]$,\newline
+%		$\glam{\Mij{k-1}{k}} \gets - \sk[k-1] {\glam{\rk[k-1]}} 
+%		- \rk[k-1]{\glam{\sk[k-1]}}.$\\
+%		$\rk \gets -\rk[k-1] \Mij{k-1}{k}$,
+%		$\glam{\rk} \gets -\rk[k-1] \glam{\Mij{k-1}{k}} - \Mij{k-1}{k}
+%		\glam{\rk[k-1]}$.\\
+%
+%
+%
+%
+%
+%		$\uk \gets \trans{{\Tk}}\Xk[1]\LAMk2\trans{\Xk[1]} \Tk[k-1]
+%		/(\tk\tk[k-1]),$\newline
+%		$\glam{\uk} \gets \Parens{\tk\tk[k-1]}^{-1}\Parens{    } -
+%		\uk\Parens{\tk[k-1]^{-1}\glam{\tk[k-1]} + \tk^{-1}\glam{\tk}}.$\\
+%
+%
+%
+%
+%		$\sk \gets \trans{{\Tk}}\Xk[1]\LAMk2\trans{\Xk[1]} \Tk /\tk^2,$\newline
+%		$\glam{\sk} \gets \tk^{-2}
+%		\Parens{2\Bracks{\diag{\trans{\Xk[1]}\Tk}\LAM\trans{\Xk[1]}\Tk +
+%		\trans{\dlam{\Tk}}\Xk[1]\LAMk2\trans{\Xk[1]}\Tk} - 2 \sk\tk}.$\\
+%		$\qk \gets \rk / \tk$,
+%		$\glam{\qk} \gets \Parens{\tk\glam{\rk} - \rk\glam{\tk}} / \tk^2$.\\
+%%		\algif{$\rk = 0$}
+%%			Full rank achieved. Let $l = k$.\\
+%%		\algend
+%%		$\Xk[k] \gets \Xk[k-1] - \Tk[k-1] \trans{\Pk[k-1]}.$\\
+%%	\label{algstep:PLSupy}
+%%		$\yk[k+1] \gets \yk - \Tk q_k.$\\
+%	\algend
+%	$\vk[l] \gets \qk[l]$, $\glam{\vk[l]} \gets \glam{\qk[l]}$.\\
+%	\algforto{$j=l-1$}{$1$}
+%		$\vk[j] \gets \qk[j] - \Mij{j}{j+1} \vk[j+1]$.\newline
+%		$\glam{\vk[j]} \gets \glam{\qk[j]} - \Mij{j}{j+1} \glam{\vk[j+1]} - \vk[j+1]
+%		\glam{\Mij{j}{j+1}}$.\\
+%	\algend
+%	$\regb \gets \LAM\trans{\Xk[1]}\Mtx{V} \vect{\vk[]},$
+%	$\dregb \gets \Mtx{V} \dlam{\vect{\vk[]}}.$\\
+%	\algforto{$j=1$}{$l$}
+%		\label{algstep:FOfaketensor}
+%		$\dregb \gets \dregb + \vk[j] \dlam{\Vk[j]}.$\\
+%	\algend
+%	$\dregb \gets \diag{\trans{\Xk[1]}\Mtx{V} \vect{\vk[]}} +
+%	\LAM\trans{\Xk[1]}\dregb.$\\
+%\algreturn \regb
+%\end{algtab}
+%\end{algorithm}%UNFOLD
+%\begin{algorithm}[htbp!]%FOLDUP
+%\caption{Algorithm for computing the PLS regression vector and Jacobian.\label{alg:fullonpls}}
+%\alginout{Predictor and response, predictor weights, number of
+%coefficients}{the regression vector and its Jacobian}
+%\algname{PLSandJacobian}{$\Xk[1], \yk[], \vlam, l$}
+%\begin{algtab}
+%%	$\Mij{}{} \gets \Mtx{I}_l,$ the $l\cross l$ identity matrix.\\
+%	$\Tk[0] \gets \vz, \uk[1] \gets 0, \glam{\uk[1]} \gets 0$,
+%	$\dlam{\Tk[0]} \gets \Mtx{0}.$\\
+%
+%	$\Wk[1] \gets \LAM\trans{{\Xk[1]}}\yk[]$, 
+%	$\dlam{\Wk[1]} \gets \diag{\trans{{\Xk[1]}}\yk[]}$.\\
+%
+%	$\Tk[1] \gets \Xk[1] \LAM\Wk[1]$,
+%	$\dlam{\Tk[1]} \gets \Xk[1] \Parens{\diag{\Wk[1]} + \LAM \dlam{\Wk[1]}} =
+%	2\Xk[1] \diag{\Wk[1]}$.\\
+%
+%	$\tk[1] \gets \trans{\Tk[1]}\Tk[1]$, 
+%	$\glam{\tk[1]} \gets 2\trans{\dlam{\Tk[1]}}\Tk[1]$.\\
+%
+%	$\Pk[1] \gets \LAM\trans{{\Xk[1]}} \Tk[1] / \tk[1]$,\newline
+%	$\dlam{\Pk[1]} \gets \tk[1]^{-1} \Parens{\diag{\trans{\Xk[1]}\Tk[1]} + \LAM
+%	\trans{\Xk[1]}\dlam{\Tk[1]} - \Pk[1]\trans{\glam{\tk[1]}}}$.\\
+%
+%	$\sk[1] \gets \trans{{\Pk[1]}} \Pk[1]$, $\glam{\sk[1]} \gets 2
+%	\trans{\dlam{\Pk[1]}}\Pk[1]$, %\\
+%	$\rk[1] \gets \trans{{\yk[]}} \Tk[1]$,\newline
+%	$\glam{\rk[1]} \gets \trans{\dlam{\Tk[1]}}\yk[]$, %\\
+%	$\qk[1] \gets \rk[1] / \tk[1]$,
+%	$\glam{\qk[1]} \gets \Parens{\tk[1]\glam{\rk[1]} - \rk[1]\glam{\tk[1]}} /
+%	\tk[1]^2$.\\
+%%	Let $\Xk[1] \gets \Xc,$ and $\yk[] \gets \yc$.\\
+%	\algforto{$k=2$}{$l$}
+%		$\Wk \gets \Wk[k-1] - \rk[k-1]\Pk[k-1]$,\newline
+%		$\dlam{\Wk} \gets \dlam{\Wk[k-1]} - \rk[k-1]\dlam{\Pk[k-1]} -
+%		\Pk[k-1]\trans{\glam{\rk[k-1]}}$.\\
+%
+%		$\Tk \gets - \Xk[1]\LAM\rk[k-1]\Pk[k-1] + \rk[k-1] \uk[k-1] \Tk[k-2] + \rk[k-1]
+%		\sk[k-1]\Tk[k-1]$,\newline
+%%		\hspace{10mm}\begin{equation*}\begin{split}
+%%		\begin{minipage}[t]{0.7\columnwidth}
+%%		\begin{multline*}
+%		\(
+%		\dlam\Tk 
+%		 \gets - \Xk[1] \Parens{\diag{\rk[k-1]\Pk[k-1]} + \LAM \Bracks{\Pk[k-1]\trans{\glam{\rk[k-1]}}
+%		+ \rk[k-1]\dlam{\Pk[k-1]}}}
+%		 + \rk[k-1] \uk[k-1] \dlam{\Tk[k-2]}
+%		+ \Tk[k-2] \trans{\Bracks{\rk[k-1] \glam{\uk[k-1]} + \uk[k-1] \glam{\rk[k-1]}}}
+%		 + \rk[k-1] \sk[k-1]\dlam{\Tk[k-1]} 
+%		+ \Tk[k-1] \trans{\Bracks{\rk[k-1] \glam{\sk[k-1]} +
+%		\sk[k-1]\glam{\rk[k-1]}}}.
+%		\)
+%		\newline
+%		\hspace{5mm}\hfill(See \noteref{rankcalc}.)
+%		\label{algstep:calcdt}
+%%		\end{multline*}
+%%		\end{minipage}
+%%		\end{split}\end{equation*}
+%		\\
+%
+%		$\tk \gets \trans{\Tk}\Tk$, 
+%		$\glam{\tk} \gets 2\trans{\dlam{\Tk}}\Tk$.\\
+%		$\Mij{k-1}{k} \gets 1 - \rk[k-1] \sk[k-1]$,\newline
+%		$\glam{\Mij{k-1}{k}} \gets - \sk[k-1] {\glam{\rk[k-1]}} 
+%		- \rk[k-1]{\glam{\sk[k-1]}}.$\\
+%		$\rk \gets -\rk[k-1] \Mij{k-1}{k}$,
+%		$\glam{\rk} \gets -\rk[k-1] \glam{\Mij{k-1}{k}} - \Mij{k-1}{k}
+%		\glam{\rk[k-1]}$.\\
+%
+%	$\Pk \gets \LAM\trans{{\Xk[1]}} \Tk / \tk$,\newline
+%	$\dlam{\Pk} \gets \tk^{-1} \Parens{\diag{\trans{\Xk[1]}\Tk} + \LAM
+%	\trans{\Xk[1]}\dlam{\Tk} - \Pk\trans{\glam{\tk}}}$.\\
+%
+%		$\uk \gets \trans{\Pk} \Pk[k-1]$,
+%		$\glam{\uk} \gets \trans{\dlam{\Pk}} \Pk[k-1] + 
+%		\trans{\dlam{\Pk[k-1]}} \Pk$.\\
+%		$\sk \gets \trans{{\Pk}} \Pk$, $\glam{\sk} \gets 2
+%		\trans{\dlam{\Pk}}\Pk$.\\
+%		$\qk \gets \rk / \tk$,
+%		$\glam{\qk} \gets \Parens{\tk\glam{\rk} - \rk\glam{\tk}} / \tk^2$.\\
+%	\algend
+%
+%	$\vk[l] \gets \qk[l]$, $\glam{\vk[l]} \gets \glam{\qk[l]}$.\\
+%	\algforto{$j=l-1$}{$1$}
+%		$\vk[j] \gets \qk[j] - \Mij{j}{j+1} \vk[j+1]$.\newline
+%		$\glam{\vk[j]} \gets \glam{\qk[j]} - \Mij{j}{j+1} \glam{\vk[j+1]} - \vk[j+1]
+%		\glam{\Mij{j}{j+1}}$.\\
+%	\algend
+%	$\regb \gets \Mtx{\Wsym} \vect{\vk[]},$
+%	$\dregb \gets \Mtx{\Wsym} \dlam{\vect{\vk[]}}.$\\
+%	\algforto{$j=1$}{$l$}
+%		\label{algstep:FOfaketensor}
+%		$\dregb \gets \dregb + \vk[j] \dlam{\Wk[j]}.$\\
+%	\algend
+%%	Let \Mtx{\Wsym} be the matrix with columns $\Wk[{\onetox{l}}].$  Similarly
+%%	define \vect{q}.\\
+%%	$\regb \gets \Mtx{\Wsym} \invs{\Mij{}{}} \vect{q}.$\\
+%%	Compute \dlam{\invs{\Mij{}{}}\vect{q}} by back substitution.
+%%	Then compute $\dregb = \dlam{\Mtx{\Wsym}\invs{\Mij{}{}}\vect{q}}$.
+%\algreturn \tuple{\regb,\dregb}
+%\end{algtab}
+%\end{algorithm}%UNFOLD
+%%FOLDUP
+%\begin{verbatim}
+%function [alpha,dalpha]	= plsandjacobian(X,y,lambda,l)
+%% [alpha,dalpha]	= plsandjacobian(X,y,lambda,l)
+%% code to compute the l-factor PLS regression coefficient to fit
+%% the model y \approx X diag(lambda) beta
+%% with beta = diag(lambda) X' alpha.
+%% also computes the jacobian of alpha with respect to lambda.
+%% input:
+%%  X           an m by n matrix, column centered.
+%%  y           an m by 1 vector, column centered.
+%%  lambda      an n vector of predictor weightings.
+%%  l           the number of pls factors.
+%% output:
+%%  alpha       a m by 1 vector of the preimage of regression coefficients.
+%%  dalpha      a m by n matrix of the Jacobian of alpha wrt lambda.
+%% nb: assumes m << n
+%% Author: Steven Pav % Created: 2006.04.11 % Copyright 2006
+%% $Id: wsel.tex 119 2006-06-22 21:18:31Z spav $
+%
+%%sanity checking
+%[m,n] = size(X);lambda = lambda(:);
+%if ((rows(y) != m) || (length(lambda) != n)) error('size mismatch.'); end
+%%allocate storage
+%V = zeros(m,l);dV = zeros(m,n,l);
+%Mdiag = zeros(l-1,1);dMdiag = zeros(l-1,n); %upper diagonal of M, and grads.
+%q  = zeros(l,1);dq = zeros(l,n);
+%Xlam = X * spdiags(lambda,[0],n,n);    %used so much we compute once and store.
+%XLX = Xlam * Xlam';        %nm^2 hit.
+%%initialize
+%Tkm1 = 0;dTkm1 = 0;V(:,1) = y;
+%Tk = XLX * V(:,1);dTk  = 2 * Xlam * diag(X' * V(:,1));
+%gk = Tk'*Tk;dgk = 2 * dTk' * Tk;
+%Zk = XLX * Tk / gk;
+%dZk = (1.0 / gk) * (XLX * dTk + 2.0 * Xlam * diag(X' * Tk) - Zk * dgk');
+%sk = Tk' * Zk / gk;dsk = (1.0 / gk) * (dZk' * Tk + dTk' * Zk - sk * dgk);
+%rk = Tk' * y;drk = dTk' * y;
+%q(1) = rk / gk;dq(1,:) = (drk - q(1) * dgk)' ./ gk;
+%
+%for k=2:l
+%  V(:,k)    = V(:,(k-1)) - q(k-1) * Tk;
+%  dV(:,:,k) = dV(:,:,k-1) - q(k-1) * dTk - Tk * dq(k-1,:);
+%  %compute current t, don't kill the old yet.
+%  if (k == 2)    %ignore t_0 and dt_0:
+%    Tp1  = rk * (-Zk + sk * Tk);
+%    dTp1 = (Tp1 / rk) * drk' + rk * (-dZk + sk * dTk + Tk * dsk');
+%  else
+%    Tp1  = rk * (-Zk + uk * Tkm1 + sk * Tk);
+%    dTp1 = (Tp1 / rk) * drk' + rk * (-dZk + uk * dTkm1 + Tkm1 * duk' + \ 
+%            sk * dTk + Tk * dsk');
+%  end
+%
+%  %update ts, zapping old values.
+%  Tkm1 = Tk;dTkm1 = dTk;Tk = Tp1;dTk = dTp1;gkm1 = gk;dgkm1 = dgk;
+%  %compute upper diags of M
+%  Mdiag(k-1)    = 1 - rk * sk;dMdiag(k-1,:)  = - (sk * drk + rk * dsk)';
+%  %update r, gradr, but not in that order b/c grad r comp needs old r
+%  drk = - (rk * dMdiag(k-1,:)' + Mdiag(k-1) * drk);
+%  rk  =  - (rk * Mdiag(k-1));
+%  %update gamma, Z
+%  gk = Tk' * Tk;dgk = 2 * dTk' * Tk;
+%  Zk = XLX * Tk / gk;
+%  dZk = (1.0/gk) * (XLX * dTk + 2 * Xlam * diag(X' * Tk) - Zk * dgk');
+%  %update s,u
+%  sk = Tk' * Zk / gk;dsk = (1.0 / gk) * (dZk' * Tk + dTk' * Zk - sk * dgk);
+%  uk = Tkm1' * Zk / gkm1;duk = (1.0 / gkm1) * (dZk' * Tkm1 + dTkm1' * Zk - uk * dgkm1);
+%  %compute q
+%  q(k) = rk / gk;dq(k,:) = (drk - q(k) * dgk)' ./ gk;
+%end
+%
+%%now compute M\q and its jacobian
+%iMq = zeros(l,1);diMq = zeros(l,n);
+%iMq(l) = q(l);diMq(l,:)  = dq(l,:);
+%for k=(l-1):-1:1
+%  iMq(k)    = q(k) - Mdiag(k) * iMq(k+1);
+%  diMq(k,:)  = dq(k,:) - (Mdiag(k) .* diMq(k+1,:) + iMq(k+1) .* dMdiag(k,:));
+%end
+%
+%%now compute VM\q and its jacobian
+%alpha = V * iMq;dalpha = V * diMq;      %+ more stuff:
+%%ack! no tensor product in octave/Matlab :(
+%for k=2:l    %dV(:,:,1) is all zeros!
+%  dalpha  += iMq(k) .* dV(:,:,k);
+%end
+%%endfunction
+%\end{verbatim}
+%%Xalph = X' * alpha;beta = lambda .* Xalph;dbeta = diag(Xalph) + Xlam' * dalpha;
+%%UNFOLD
+%
+%scratch:
+%X = Xc .+ Xm
+%X beta = Xc beta .+ Xm beta
+%       ~ (y .- ym) .+ Xm beta
+%       = y .+  (Xm beta - ym)
