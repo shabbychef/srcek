@@ -10,7 +10,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%UNFOLD
 
 \typeout{-- wsel.tex}
-\typeout{-- N© 2006 s.e.p.}
+\typeout{-- N© 2006-2013 s.e.p.}
 \typeout{-- SVNId: $Id: wsel.tex 119 2006-06-22 21:18:31Z spav $}
 
 %preamble%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FOLDUP
@@ -19,6 +19,7 @@
 \usepackage{graphicx,epsfig,psfrag}
 \usepackage[usenames]{color}
 \usepackage{subfigure}
+\usepackage[square,numbers]{natbib}
 \graphicspath{{figs/}}
 \newcommand{\useBW}{.bw}
 \newcommand{\figDIR}{figs}
@@ -30,11 +31,11 @@
 %\usepackage[english,dark,none,bottom,portrait,timestamp]{draftcopy}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\lhead{\svnInfoFile~V\svnInfoRevision}
+%\lhead{\svnInfoFile~V\svnInfoRevision}
 \chead{}
-\rhead{\svnInfoDate~\svnInfoTime}
+%\rhead{\svnInfoDate~\svnInfoTime}
 %\rfoot{\bfseries PROPRIETARY \& CONFIDENTIAL}
-\rfoot{\bfseries Copyright 2006, S. E. Pav; Distribution Unlimited.}
+%\rfoot{\bfseries Copyright 2006, S. E. Pav; Distribution Unlimited.}
 \cfoot{}
 \usepackage{lastpage}
 \lfoot{p. \thepage /\pageref{LastPage}}
@@ -301,7 +302,41 @@
 %\usepackage{import}
 %\import*{dirname/}{filenamenodottex}
 
-\usepackage[environments,commands,meshstuff,shortcuts]{sepmath}
+%\usepackage[environments,commands,meshstuff,shortcuts]{sepmath}
+\RequirePackage{ifthen}
+\RequirePackage{xspace}
+		\PassOptionsToPackage{leqno,fleqn,intlimits}{empheq}
+		\RequirePackage{empheq}
+%		superseded by empheq
+		\RequirePackage{amsmath}
+		\RequirePackage{amsfonts}
+		\RequirePackage{amsthm}
+		%for bold symbol vectors?:
+		\RequirePackage{amsbsy}
+		\PassOptionsToPackage{mathscr}{eucal}
+		\RequirePackage{eucal}
+\providecommand{\kth}[1]{\ensuremath{#1^{\text{th}}}}
+\providecommand{\eg}{\emph{e.g.},\xspace}
+\providecommand{\etal}{\emph{et al.}\xspace}
+\def\@SEPCmathwrap#1{\ensuremath{#1}\xspace}
+\providecommand{\MATHIT}[1]{\ensuremath{#1}\xspace}
+
+\providecommand{\nePAIR}[2]{#1\lMr{#2}}
+\providecommand{\neSUB}[2]{\mtP{#2}{#1}{{{#1}_{#2}}}}
+\providecommand{\neSUP}[2]{\mtP{#2}{#1}{{{#1}^{#2}}}}
+%\providecommand{\neUL}[3]{\neSUB{\neSUP{#1}{#2}}{#3}}
+\providecommand{\neUL}[3]{\mtP{#2}{\mtP{#3}{#1}{{#1}_{#3}}}{\mtP{#3}{{#1}^{#2}}{{#1}^{#2}_{#3}}}}
+
+\providecommand{\mathSUB}[2]{\MATHIT{\neSUB{#1}{#2}}}
+\providecommand{\mathSUP}[2]{\MATHIT{\neSUP{#1}{#2}}}
+\providecommand{\mathUL}[3]{\MATHIT{\neUL{#1}{#2}{#3}}}
+
+%which to use?
+\providecommand{\Matx}[1]{\MATHIT{\mathbf{#1}}}
+\providecommand{\Mtx}[1]{\MATHIT{\mathsf{#1}}}
+\providecommand{\vect}[1]{\MATHIT{\boldsymbol{#1}}}
+
+\providecommand{\cross}{\times}
 
 \usepackage{varioref}
 \providecommand{\algvref}[1]{Algorithm~\vref{alg:#1}}
@@ -314,14 +349,16 @@
 %UNFOLD
 
 \title{\SRCEK{}: A Continuous Embedding of the Channel Selection Problem for WPLS Modeling.}%FOLDUP
-\author{Steven E. Pav\thanks{ Nellcor, 4280 Hacienda Drive, Pleasanton, CA
-94588. Steven.Pav@TycoHealthcare.com.
-I wish to thank M. Forina for providing data sets and for answering my 
-questions regarding his prior work on the topic.
+\author{Steven E. Pav\thanks{spav@alumni.cmu.edu This method of wavelength 
+selection may be covered by patent. \cite{USPAT8112375}
+This research was originally conducted during the author's tenure at 
+Nellcor, a subsidiary of Tyco Healthcare, now known as `Covidien'. 
+The author wishes to thank M. Forina for providing data sets and guidance
+regarding prior work on the topic.
 Some of this research was conducted
 at the time the author was a juror in the court of 
 Judge Donald S. Mitchell, Department \#602, City and County of San Francisco,
-California: ``Everyone's here and we're ready!''}}
+California: ``Everyone's here and we. are. ready.''}}
 \date{\today}
 \keywords{Chemometrics, PLS, Wavelength Selection.}
 %UNFOLD
@@ -349,6 +386,7 @@ predictor selection techniques surveyed by Forina \etal  \cite{Forinaetal2004}
 %An extension of the technique which also detects outliers seems possible.
 \end{abstract}
 \normalsize\textbf{Keywords:~}\@keywords\vskip20pt
+\nocite{USPAT8112375}
 %UNFOLD
 
 \section{Introduction}%FOLDUP
@@ -2723,7 +2761,8 @@ parameters which work well in a wide range of settings would be welcome.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%UNFOLD
 
 %\bibliographystyle{plain}
-\bibliographystyle{sepbib}
+%\bibliographystyle{sepbib}
+\bibliographystyle{plainnat}
 \bibliography{wsel}
 %\bibliography{sepbiblio}
 \pagebreak
@@ -3588,3 +3627,5 @@ endfunction
 %X beta = Xc beta .+ Xm beta
 %       ~ (y .- ym) .+ Xm beta
 %       = y .+  (Xm beta - ym)
+%for vim modeline: (do not edit)
+% vim:fdm=marker:fmr=FOLDUP,UNFOLD:cms=%%s:syn=tex:ft=tex
