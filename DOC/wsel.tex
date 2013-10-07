@@ -34,8 +34,6 @@
 %\lhead{\svnInfoFile~V\svnInfoRevision}
 \chead{}
 %\rhead{\svnInfoDate~\svnInfoTime}
-%\rfoot{\bfseries PROPRIETARY \& CONFIDENTIAL}
-%\rfoot{\bfseries Copyright 2006, S. E. Pav; Distribution Unlimited.}
 \cfoot{}
 \usepackage{lastpage}
 \lfoot{p. \thepage /\pageref{LastPage}}
@@ -49,6 +47,13 @@
 %\providecommand{\widefbox}[1]{\fbox{\hspace{1em}{#1}\hspace{1em}}}
 %
 
+
+
+%compactitem and such:
+\usepackage[newitem,newenum,increaseonly]{paralist}
+%importing:
+
+\usepackage[environments,commands]{comcom}
 
 %basic symbols
 
@@ -296,53 +301,6 @@
 \providecommand{\dsk}{\emph{Kalivas}}
 \providecommand{\dsa}{\emph{Artificial}}
 
-%compactitem and such:
-\usepackage[newitem,newenum,increaseonly]{paralist}
-%importing:
-%\usepackage{import}
-%\import*{dirname/}{filenamenodottex}
-
-%\usepackage[environments,commands,meshstuff,shortcuts]{sepmath}
-\RequirePackage{ifthen}
-\RequirePackage{xspace}
-		\PassOptionsToPackage{leqno,fleqn,intlimits}{empheq}
-		\RequirePackage{empheq}
-%		superseded by empheq
-		\RequirePackage{amsmath}
-		\RequirePackage{amsfonts}
-		\RequirePackage{amsthm}
-		%for bold symbol vectors?:
-		\RequirePackage{amsbsy}
-		\PassOptionsToPackage{mathscr}{eucal}
-		\RequirePackage{eucal}
-\providecommand{\kth}[1]{\ensuremath{#1^{\text{th}}}}
-\providecommand{\eg}{\emph{e.g.},\xspace}
-\providecommand{\etal}{\emph{et al.}\xspace}
-\def\@SEPCmathwrap#1{\ensuremath{#1}\xspace}
-\providecommand{\MATHIT}[1]{\ensuremath{#1}\xspace}
-
-\providecommand{\nePAIR}[2]{#1\lMr{#2}}
-\providecommand{\neSUB}[2]{\mtP{#2}{#1}{{{#1}_{#2}}}}
-\providecommand{\neSUP}[2]{\mtP{#2}{#1}{{{#1}^{#2}}}}
-%\providecommand{\neUL}[3]{\neSUB{\neSUP{#1}{#2}}{#3}}
-\providecommand{\neUL}[3]{\mtP{#2}{\mtP{#3}{#1}{{#1}_{#3}}}{\mtP{#3}{{#1}^{#2}}{{#1}^{#2}_{#3}}}}
-
-\providecommand{\mathSUB}[2]{\MATHIT{\neSUB{#1}{#2}}}
-\providecommand{\mathSUP}[2]{\MATHIT{\neSUP{#1}{#2}}}
-\providecommand{\mathUL}[3]{\MATHIT{\neUL{#1}{#2}{#3}}}
-
-%which to use?
-\providecommand{\Matx}[1]{\MATHIT{\mathbf{#1}}}
-\providecommand{\Mtx}[1]{\MATHIT{\mathsf{#1}}}
-\providecommand{\vect}[1]{\MATHIT{\boldsymbol{#1}}}
-
-\providecommand{\cross}{\times}
-
-\usepackage{varioref}
-\providecommand{\algvref}[1]{Algorithm~\vref{alg:#1}}
-\renewcommand{\algref}[1]{Algorithm~\ref{alg:#1}}
-
-\providecommand{\figvref}[1]{Figure~\vref{fig:#1}}
 
 \newcommand{\keywords}[1]%
 {\def\@keywords{\textbf{#1}}}
@@ -429,7 +387,7 @@ In the general context of chemometrics, the number
 of objects is generally far fewer than the number of channels:  $\ro\ll\cl$.
 
 An affine predictive model consists of an
-$\cl$-vector \regb and scalar ``intercept'' \rego such that $\rsp \approx
+$\cl$-vector $\regb$ and scalar ``intercept'' \rego such that $\rsp \approx
 \prd\regb + \rego\wunro,$ where \wunro is the vector of $\ro$ ones.  When calibrated on a
 given collection of predictors and responses \prd and \rsp, different algorithms 
 produce different affine models.  
@@ -497,7 +455,7 @@ similarly for \RMSEP, \etc
 %average estimate of the variance of the observed responses:
 %\[\MSETCV = \oneby{J}\sum_{j=1}^J \oneby{\msz{j}}\norm{\rsp_j - \bar{\rsp_j}}^2,\]
 %where $\bar{\rsp_j}$ is the mean of the calibration responses in the \kth{j}
-%cross validation group\tsidenote{This is the mean over the calibration
+%cross validation group\footnote{This is the mean over the calibration
 %responses, not the test responses.}.  The ``T'' stands for ``trivial,''
 %although this is my terminology and is nonstandard.
 %Comparing the \MSECV{} to the \MSETCV{} gives the cross-validation percent explained
@@ -534,7 +492,7 @@ simultaneously, in parallel, rather than serially.   This will lead to a channel
 selection technique with runtime asymptotically linear in the number of channels.
 
 Predictive weighting can be viewed as a preprocessing step.  Let $\vlam \in
-\reals{\cl}$ be a vector of weights\tsidenote{For this note, we ignore the
+\reals{\cl}$ be a vector of weights\footnote{For this note, we ignore the
 possibility of \vlam having a zero element.}.  Let \LAM be the diagonal
 $\cl\cross\cl$ matrix whose diagonal is the vector \vlam.  Hereafter I will let
 \diag{\vect{v}} denote the diagonal matrix whose diagonal is \vect{v}, so $\LAM
@@ -576,11 +534,15 @@ models can then be compared using any model selection technique, \eg
 minimization of \RMSECV or an information criterion.
 \cite{Shao:1993:LMS,Shao:1997:ATLMS,Ah:1974,Bk2004,CjeNaa1999}
 
-I call this technique ``SRCEK{}'' (pronounced ``SIR check'').  In Slovene,
-{\emph{sr\v{c}ek}} means ``sweetheart.''  Like many acronyms, the construction
-of this acronym was rather forced;  it originally stood for ``Selecting
-Regressors by Continuous Embedding in K-dimensions,'' but I found it more
-natural to let $\cl$ stand for the number of dimensions.
+I call this technique ``SRCEK{}'' (pronounced ``SIR check''), an
+acronym for 
+``Selecting Regressors by Continuous Embedding in K-dimensions,''
+but also taken from the Slove word {\emph{sr\v{c}ek}},
+meaning ``sweetheart.''  
+%Like many acronyms, the construction
+%of this acronym was rather forced;  it originally stood for ``Selecting
+%Regressors by Continuous Embedding in K-dimensions,'' but I found it more
+%natural to let $\cl$ stand for the number of dimensions.
 %I will describe the SRCEK{} technique and its implementation in full detail
 %in the sequel.
 
@@ -728,7 +690,7 @@ This algorithm is different from the usual formulation in that the vectors
 resultant vectors \Wk, \Tk and \Pk are identical to those produced by the 
 canonical computation, \emph{up to scaling}.
 The change in scaling does not affect the resultant regression vector,
-\regb, nor does it change the matrix \Xk.
+$\regb$, nor does it change the matrix \Xk.
 
 \begin{algorithm}[htb!]%FOLDUP
 \caption{Algorithm to compute the WPLS regression vector.\label{alg:vanillapls}}
@@ -1390,7 +1352,7 @@ intercept and its gradient.}
 
 Careful inspection and the vector calculus rules outlined in \secref{bguide}
 are all that is required to verify that \algref{fullonpls} correctly computes
-the Jacobian of the model \regb.  The only theoretical complication in the
+the Jacobian of the model $\regb$.  The only theoretical complication in the
 transformation of \algref{oddpls} to \algref{fullonpls} is the explicit formulation
 of the back substitution to compute $\vect{\vk[]} = \invs{\Mij{}{}} \vect{q}.$
 Given that \Mij{}{} is upper triangular, bidiagonal with unit diagonal,
@@ -1477,7 +1439,7 @@ to see.  See \secref{impnotes} for details on the tested platform.}\label{fig:co
 
 \section{The BFGS Algorithm}%FOLDUP
 
-The BFGS algorithm\tsidenote{Named for its discoverers, Broyden, Fletcher,
+The BFGS algorithm\footnote{Named for its discoverers, Broyden, Fletcher,
 Goldfarb and Shanno.} is a quasi-Newton optimization algorithm.  That is, the algorithm
 models a scalar function of many variables by a quadratic function with an
 approximate Hessian.  The approximation to the Hessian is improved at each step
@@ -1544,7 +1506,7 @@ loss of generality.
 Clearly, the weightings of the channels somehow signify their importance, and
 can be used in the selection of a subset of the channels. 
 The ordering in significance indicated by \vlam suggests $\cl$ different possible
-choices of subsets\tsidenote{To be fair, the trivial model, which estimates the
+choices of subsets\footnote{To be fair, the trivial model, which estimates the
 \yk[] values as constant, should also be considered.}, the \kth{\ms} of which is
 the subset with the $\ms$ most significant channels.  If the acceptable number of
 channels is bounded by an external restriction, say an upper bound of $\cl_f,$ then 
@@ -1571,7 +1533,7 @@ The asymptotic (in $\ro$) consistency of model selection criteria was examined b
 Shao. \cite{Shao:1993:LMS,Shao:1997:ATLMS}  A number of differences exist
 between the formulation studied by Shao and that presented here: our design
 matrix is assumed to be of reduced rank (\ie \eqnref{Xdeco} describes a reduced
-rank matrix) and non-deterministic\tsidenote{Shao dismisses this complication by
+rank matrix) and non-deterministic\footnote{Shao dismisses this complication by
 stating his results will hold almost surely under certain conditions.}; our
 affine model is built by PLS rather than OLS. However, absent any extant
 results for the reduced rank formulation, I follow Shao's work, which you may
@@ -1603,7 +1565,7 @@ especially in those tests where selecting overly large models is possible.
 %$\hat{\sigma}^2$ is an estimate of \sigmy, the variance of \ye (see
 %\eqnref{ydeco}), constructed from all the channels.  Because of the reduced rank of
 %\Xk[] and the large number of channels, one cannot use the
-%canonical estimator\tsidenote{It would be negative!}, rather one is tempted to
+%canonical estimator\footnote{It would be negative!}, rather one is tempted to
 %estimate \sigmy by $\ro\MSEP / (\ro - \fc - 1)$, where \MSEP in this case is based on
 %all the channels using $\fc$ factor PLS.  Since the \MSEP from the full
 %set of channels may be biased, one may alternatively use the estimate
@@ -1701,7 +1663,7 @@ these criteria over the other.
 It is not obvious that the magnitudes of the elements of \vlam are sufficient
 to establish an importance ordering on the channels.  For instance, it might be
 appropriate to multiply the elements of \vlam by the corresponding element of
-the regression vector \regb chosen by WPLS on the entire data set, and use that
+the regression vector $\regb$ chosen by WPLS on the entire data set, and use that
 Kronecker product vector as the importance ordering.  It might be argued that
 that product should further be multiplied by the sample standard deviation of
 the channels.  As there seems to be no
@@ -2845,7 +2807,7 @@ Again the proof is trivial:
 = \lamex{p}{i} \Parens{\dlam{\vect{f}}}_{i,j} + f_i p\lamex{p-1}{i}\kron{i,j}\\
 &= \Parens{\LAMk{p} \dlam{\vect{f}}}_{i,j} + \Parens{p\LAMk{p-1}\diag{\vect{f}}}_{i,j}.
 \end{align*}
-We have used \kron{i,j} to be the Kronecker delta, which is one if $i=j$ and
+We have used $\kron{i,j}$ to be the Kronecker delta, which is one if $i=j$ and
 zero otherwise.
 
 %%%%%%%%%%%%%
@@ -3293,7 +3255,7 @@ endfunction
 %is implemented as written, the asymptotic runtime of the algorithm is 
 %\bigo{\fc\ro\cl^2}.  This gives no asymptotic advantage over a numerical
 %approximation to the Jacobian, which can be had by \bigo{\cl} evaluations of
-%the PLS algorithm, each incurring \bigo{\fc\ro\cl} run time\tsidenote{Although
+%the PLS algorithm, each incurring \bigo{\fc\ro\cl} run time\footnote{Although
 %the analytic version is usually faster by an order of magnitude than the
 %numeric approximation.}.
 %
@@ -3628,4 +3590,4 @@ endfunction
 %       ~ (y .- ym) .+ Xm beta
 %       = y .+  (Xm beta - ym)
 %for vim modeline: (do not edit)
-% vim:fdm=marker:fmr=FOLDUP,UNFOLD:cms=%%s:syn=tex:ft=tex
+% vim:fdm=marker:fmr=FOLDUP,UNFOLD:cms=%%s:syn=tex:ft=tex:nu
